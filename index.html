@@ -1,0 +1,1168 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Examonlan PRO - Dashboard Pemantau Ujian Google Form</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome untuk ikon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- html2pdf.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <!-- SheetJS (XLSX) untuk Eksport ke Excel -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        .glass {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        .dark .glass {
+            background: rgba(17, 24, 39, 0.85);
+        }
+
+        /* Aturan Cetak Printer Fisik Bawaan Browser (Print-Ready Format F4) */
+        @media print {
+            body > *:not(#printPreviewModal) {
+                display: none !important;
+            }
+            
+            #printPreviewModal {
+                position: absolute !important;
+                left: 0 !important;
+                top: 0 !important;
+                width: 100% !important;
+                height: auto !important;
+                background: none !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                display: block !important;
+            }
+            
+            #printPreviewModal > div > div:first-child, /* Header modal */
+            #printPreviewModal > div > div:nth-child(2), /* Kontrol input */
+            #printPreviewModal > div > div:last-child { /* Footer tombol */
+                display: none !important;
+            }
+
+            #printPreviewModal > div {
+                max-width: none !important;
+                max-height: none !important;
+                box-shadow: none !important;
+                background: transparent !important;
+                border: none !important;
+                display: block !important;
+            }
+
+            #modalPaperSheet {
+                display: block !important;
+                width: 215mm !important;
+                height: 330mm !important;
+                border: none !important;
+                box-shadow: none !important;
+                background: #ffffff !important;
+                color: #000000 !important;
+                padding: 1.0cm 1.5cm 1.5cm 1.5cm !important;
+                margin: 0 !important;
+                box-sizing: border-box !important;
+                page-break-after: avoid;
+                page-break-inside: avoid;
+                font-family: 'Times New Roman', Times, serif !important;
+            }
+            
+            #modalPaperSheet table {
+                width: 100% !important;
+                border-collapse: collapse !important;
+                background-color: transparent !important;
+            }
+            #modalPaperSheet th, #modalPaperSheet td {
+                border: 1px solid #000000 !important;
+                padding: 6px 8px !important;
+                color: #000000 !important;
+                background-color: transparent !important;
+                font-size: 11pt !important;
+            }
+            #modalPaperSheet th {
+                font-weight: bold !important;
+                text-transform: uppercase !important;
+            }
+
+            @page {
+                size: 215mm 330mm;
+                margin: 0;
+            }
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f7ff',
+                            100: '#e0effe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            900: '#1e3a8a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-300 min-h-screen flex flex-col">
+
+    <!-- HEADER / NAVIGATION -->
+    <header class="sticky top-0 z-40 w-full border-b border-slate-200 dark:border-slate-800 glass transition-colors duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <!-- Logo & Brand -->
+            <div class="flex items-center gap-3">
+                <div class="bg-brand-600 text-white p-2.5 rounded-xl shadow-lg shadow-brand-500/30 flex items-center justify-center">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <span class="text-xl font-extrabold tracking-tight bg-gradient-to-r from-brand-600 to-indigo-600 bg-clip-text text-transparent">Examonlan PRO</span>
+                    <div class="flex flex-wrap items-center gap-x-2 -mt-1">
+                        <span class="text-xs font-bold text-slate-400 dark:text-slate-500">MONITORING SYSTEM</span>
+                        <span class="text-slate-300 dark:text-slate-700 text-xs hidden sm:inline">&bull;</span>
+                        <a href="https://www.youtube.com/@spendaka.info137" target="_blank" rel="noopener noreferrer" class="text-xs font-semibold text-rose-600 dark:text-rose-400 hover:text-rose-700 dark:hover:text-rose-300 flex items-center gap-1 transition-colors">
+                            <i class="fa-brands fa-youtube text-red-500"></i> Ari Laksana
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Header Controls -->
+            <div class="flex items-center gap-3">
+                <div id="activeIndicator" class="hidden md:flex items-center gap-2 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 px-3 py-1.5 rounded-full text-xs font-semibold border border-emerald-200/50">
+                    <span class="relative flex h-2 w-2">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                    </span>
+                    Sistem Aktif
+                </div>
+
+                <button id="themeToggle" class="p-2 rounded-xl text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                    <i class="fa-solid fa-moon text-lg dark:hidden"></i>
+                    <i class="fa-solid fa-sun text-lg hidden dark:block"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTAINER -->
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
+
+        <!-- GOOGLE SHEETS CONNECTOR CARD -->
+        <section class="bg-white dark:bg-slate-800 rounded-3xl p-6 shadow-xl shadow-slate-200/50 dark:shadow-none border border-slate-100 dark:border-slate-800 transition-all duration-300">
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+                <div class="space-y-2">
+                    <div class="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 font-bold text-sm uppercase tracking-wider">
+                        <i class="fa-solid fa-display"></i> Aplikasi Pengawas Ujian Online
+                    </div>
+                    <h2 class="text-xl md:text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-snug">
+                        Dashboard Pemantau Real-Time Jawaban Ujian Siswa
+                    </h2>
+                    <!-- Baris tambahan informasi sekolah dibawah judul utama -->
+                    <p class="text-md font-bold text-brand-600 dark:text-brand-400 flex items-center gap-2">
+                        <i class="fa-solid fa-school"></i> SMP NEGERI 2 KARANGSEMBUNG
+                    </p>
+                    <p class="text-slate-500 dark:text-slate-400 text-sm max-w-3xl">
+                        Tempel tautan Google Spreadsheet Anda di bawah ini. Pastikan setelan berbagi diatur ke <span class="font-semibold text-slate-700 dark:text-slate-200">"Siapa saja yang memiliki link dapat melihat"</span> agar sistem dapat membaca data secara real-time.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Input Box -->
+            <div class="mt-6 p-4 bg-slate-50 dark:bg-slate-950/50 rounded-2xl border border-slate-200/60 dark:border-slate-800 flex flex-col md:flex-row gap-3">
+                <div class="relative flex-1">
+                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+                        <i class="fa-solid fa-link"></i>
+                    </div>
+                    <input type="text" id="spreadsheetUrl" 
+                        class="block w-full pl-11 pr-4 py-3 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-sm placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 dark:text-white transition-all" 
+                        placeholder="https://docs.google.com/spreadsheets/d/ID_SPREADSHEET_ANDA/edit..."
+                        value="">
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="loadSpreadsheetData()" class="flex-1 md:flex-none flex items-center justify-center gap-2 bg-brand-600 hover:bg-brand-700 text-white font-semibold px-6 py-3 rounded-xl transition-all shadow-lg shadow-brand-500/20 whitespace-nowrap">
+                        <i class="fa-solid fa-sync" id="refreshIcon"></i> Muat &amp; Sinkronkan
+                    </button>
+                    <button onclick="loadDemoData()" class="px-4 py-3 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-semibold rounded-xl transition-all whitespace-nowrap text-sm" title="Muat Data Demo / Simulasi">
+                        <i class="fa-solid fa-vial mr-1"></i> Demo Data
+                    </button>
+                </div>
+            </div>
+            <div id="connectionStatus" class="mt-3 text-xs flex items-center gap-1.5 text-slate-500 dark:text-slate-400">
+                <span id="statusIndicatorDot" class="inline-block w-2.5 h-2.5 bg-amber-400 rounded-full"></span>
+                <span id="statusText">Aplikasi Siap (Memuat data demo secara otomatis sebagai ilustrasi awal)</span>
+            </div>
+        </section>
+
+        <!-- STATS DASHBOARD -->
+        <section class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <!-- Stat 1: Total Peserta -->
+            <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl shadow-md border border-slate-100 dark:border-slate-800 flex items-center gap-4 transition-all hover:scale-[1.02]">
+                <div class="p-3.5 bg-brand-50 dark:bg-brand-950/30 text-brand-600 dark:text-brand-400 rounded-xl">
+                    <i class="fa-solid fa-users text-2xl"></i>
+                </div>
+                <div>
+                    <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Peserta</p>
+                    <h3 class="text-2xl font-bold mt-1 text-slate-800 dark:text-white" id="statTotal">0</h3>
+                </div>
+            </div>
+            <!-- Stat 2: Rata-rata Skor -->
+            <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl shadow-md border border-slate-100 dark:border-slate-800 flex items-center gap-4 transition-all hover:scale-[1.02]">
+                <div class="p-3.5 bg-amber-50 dark:bg-amber-950/30 text-amber-600 dark:text-amber-400 rounded-xl">
+                    <i class="fa-solid fa-chart-line text-2xl"></i>
+                </div>
+                <div>
+                    <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Rerata Skor</p>
+                    <h3 class="text-2xl font-bold mt-1 text-slate-800 dark:text-white" id="statAverage">0</h3>
+                </div>
+            </div>
+            <!-- Stat 3: Skor Tertinggi -->
+            <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl shadow-md border border-slate-100 dark:border-slate-800 flex items-center gap-4 transition-all hover:scale-[1.02]">
+                <div class="p-3.5 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 rounded-xl">
+                    <i class="fa-solid fa-trophy text-2xl"></i>
+                </div>
+                <div>
+                    <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Skor Tertinggi</p>
+                    <h3 class="text-2xl font-bold mt-1 text-slate-800 dark:text-white" id="statHighest">0</h3>
+                </div>
+            </div>
+            <!-- Stat 4: Skor Terendah -->
+            <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl shadow-md border border-slate-100 dark:border-slate-800 flex items-center gap-4 transition-all hover:scale-[1.02]">
+                <div class="p-3.5 bg-rose-50 dark:bg-rose-950/30 text-rose-600 dark:text-rose-400 rounded-xl">
+                    <i class="fa-solid fa-circle-down text-2xl"></i>
+                </div>
+                <div>
+                    <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Skor Terendah</p>
+                    <h3 class="text-2xl font-bold mt-1 text-slate-800 dark:text-white" id="statLowest">0</h3>
+                </div>
+            </div>
+        </section>
+
+        <!-- MENU NAVIGATION TABS -->
+        <div class="flex border-b border-slate-200 dark:border-slate-800 space-x-1">
+            <button id="tabButtonTable" onclick="switchMenu('table')" 
+                class="flex items-center gap-2 py-3.5 px-6 font-bold text-sm border-b-2 border-brand-600 text-brand-600 dark:text-brand-500 transition-all duration-200">
+                <i class="fa-solid fa-list-check"></i>
+                Daftar Peserta Ujian
+            </button>
+            <button id="tabButtonCharts" onclick="switchMenu('charts')" 
+                class="flex items-center gap-2 py-3.5 px-6 font-semibold text-sm border-b-2 border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 transition-all duration-200">
+                <i class="fa-solid fa-table-list"></i>
+                Rekapitulasi Peserta Ujian
+            </button>
+        </div>
+
+        <!-- TAB CONTENT: DAFTAR PESERTA UJIAN -->
+        <div id="tabContentTable" class="space-y-6 block">
+            <section class="bg-white dark:bg-slate-800 rounded-3xl shadow-xl border border-slate-100 dark:border-slate-800 overflow-hidden">
+                <!-- Filter Header -->
+                <div class="p-6 border-b border-slate-100 dark:border-slate-800 space-y-4">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div>
+                            <h3 class="text-lg font-bold">Daftar Peserta Ujian</h3>
+                            <p class="text-xs text-slate-400 dark:text-slate-500">Data terperinci respon peserta yang ditarik dari Google Form</p>
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="flex flex-wrap items-center gap-3">
+                            <!-- Search Box -->
+                            <div class="relative w-full sm:w-64">
+                                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                                    <i class="fa-solid fa-magnifying-glass text-sm"></i>
+                                </span>
+                                <input type="text" id="searchInput" oninput="filterData()"
+                                    class="w-full pl-10 pr-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 transition-all text-slate-800 dark:text-white"
+                                    placeholder="Cari Nama Peserta...">
+                            </div>
+
+                            <!-- Dropdown Class Filter -->
+                            <select id="classFilter" onchange="filterData()"
+                                class="px-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 transition-all text-slate-600 dark:text-slate-300 font-bold cursor-pointer">
+                                <option value="">Semua Kelas</option>
+                            </select>
+
+                            <!-- Tombol Print Preview -->
+                            <button onclick="openPrintPreview()" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-slate-200 dark:text-slate-900 text-white rounded-xl text-sm font-bold transition-all flex items-center gap-2 shadow-md">
+                                <i class="fa-solid fa-print"></i> Print Preview F4
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Panel Opsi Pengaturan Nilai KKM Kelas 7, 8, 9 -->
+                    <div class="p-4 bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-slate-200/60 dark:border-slate-700/50 flex flex-col sm:flex-row flex-wrap items-start sm:items-center gap-4 text-xs font-semibold text-slate-600 dark:text-slate-300 transition-all duration-300">
+                        <span class="flex items-center gap-1.5 text-slate-900 dark:text-white font-bold uppercase tracking-wider text-[11px]">
+                            <i class="fa-solid fa-sliders text-brand-600"></i> Pengaturan KKM Ujian:
+                        </span>
+                        <div class="flex items-center gap-2">
+                            <label for="kkmClass7" class="cursor-pointer">Kelas 7:</label>
+                            <input type="number" id="kkmClass7" value="75" min="0" max="100" oninput="updateKkmValues()" class="w-16 px-2.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-center font-bold focus:outline-none focus:ring-2 focus:ring-brand-500 transition-all">
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <label for="kkmClass8" class="cursor-pointer">Kelas 8:</label>
+                            <input type="number" id="kkmClass8" value="76" min="0" max="100" oninput="updateKkmValues()" class="w-16 px-2.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-center font-bold focus:outline-none focus:ring-2 focus:ring-brand-500 transition-all">
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <label for="kkmClass9" class="cursor-pointer">Kelas 9:</label>
+                            <input type="number" id="kkmClass9" value="80" min="0" max="100" oninput="updateKkmValues()" class="w-16 px-2.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-center font-bold focus:outline-none focus:ring-2 focus:ring-brand-500 transition-all">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Table Wrapper -->
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-50/70 dark:bg-slate-900/30 border-b border-slate-100 dark:border-slate-800 text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
+                                <th class="py-4 px-6 text-center w-16">No</th>
+                                <th class="py-4 px-6">Nama Lengkap</th>
+                                <th class="py-4 px-6">Kelas</th>
+                                <th class="py-4 px-6">Score</th>
+                                <th class="py-4 px-6">Selesai Mengerjakan</th>
+                                <th class="py-4 px-6 text-center">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="studentTableBody" class="divide-y divide-slate-100 dark:divide-slate-800/50 text-sm">
+                            <!-- Data rows akan dimasukkan secara dinamis di sini -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Empty State -->
+                <div id="emptyState" class="hidden py-16 text-center space-y-3">
+                    <div class="text-slate-300 dark:text-slate-700 text-5xl">
+                        <i class="fa-solid fa-folder-open"></i>
+                    </div>
+                    <h4 class="text-base font-semibold text-slate-600 dark:text-slate-400">Belum ada data masuk</h4>
+                    <p class="text-xs text-slate-400 max-w-xs mx-auto">Silakan tautkan URL Google Spreadsheet Anda di atas untuk memulai pemantauan.</p>
+                </div>
+
+                <!-- Table Footer Pagination Info -->
+                <div class="p-4 bg-slate-50 dark:bg-slate-900/30 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs text-slate-400">
+                    <div id="tableSummary">Menampilkan 0 dari 0 peserta</div>
+                    <div class="flex gap-2">
+                        <button onclick="changePage(-1)" id="prevBtn" class="px-3 py-1.5 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">Sebelumnya</button>
+                        <button onclick="changePage(1)" id="nextBtn" class="px-3 py-1.5 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">Selanjutnya</button>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- TAB CONTENT: REKAPITULASI PESERTA UJIAN -->
+        <div id="tabContentCharts" class="space-y-6 hidden">
+            <!-- ANALISIS TABLES SECTION -->
+            <section class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Tabel 1: Data Peserta Ujian per Kelas -->
+                <div class="bg-white dark:bg-slate-800 p-6 rounded-3xl shadow-xl border border-slate-100 dark:border-slate-800">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-bold flex items-center gap-2 text-slate-900 dark:text-white">
+                            <i class="fa-solid fa-graduation-cap text-indigo-500"></i> Data Peserta Ujian per Kelas
+                        </h3>
+                        <div class="flex gap-2">
+                            <!-- Tombol Export PDF -->
+                            <button onclick="exportRecapToPdf('classSummaryTable', 'Data_Peserta_Ujian_per_Kelas')" class="px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shadow-md">
+                                <i class="fa-solid fa-file-pdf"></i> PDF
+                            </button>
+                            <!-- Tombol Export Excel -->
+                            <button onclick="exportRecapToExcel('classSummaryTable', 'Data_Peserta_Ujian_per_Kelas')" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shadow-md">
+                                <i class="fa-solid fa-file-excel"></i> Excel
+                            </button>
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto relative min-h-[220px]">
+                        <table id="classSummaryTable" class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-slate-50/70 dark:bg-slate-900/30 border-b border-slate-100 dark:border-slate-800 text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
+                                    <th class="py-3.5 px-4 text-center w-16">No</th>
+                                    <th class="py-3.5 px-4">Kelas</th>
+                                    <th class="py-3.5 px-4 text-center">Mengikuti Ujian</th>
+                                    <th class="py-3.5 px-4 text-center">Tidak Mengikuti</th>
+                                    <th class="py-3.5 px-4 text-center">Total Siswa (Kuota)</th>
+                                    <th class="py-3.5 px-4 text-center">Persentase (%)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="classSummaryBody" class="divide-y divide-slate-100 dark:divide-slate-800/50 text-sm">
+                                <!-- Data akan diinjeksi via JS -->
+                            </tbody>
+                        </table>
+                        <div id="classTableEmpty" class="absolute inset-0 flex items-center justify-center bg-white/90 dark:bg-slate-800/90 text-sm text-slate-400 hidden">
+                            Tidak ada data kelas untuk ditampilkan
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tabel 2: Distribusi Kualifikasi Ketuntasan per Kelas -->
+                <div class="bg-white dark:bg-slate-800 p-6 rounded-3xl shadow-xl border border-slate-100 dark:border-slate-800">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-bold flex items-center gap-2 text-slate-900 dark:text-white">
+                            <i class="fa-solid fa-circle-check text-brand-500"></i> Kualifikasi Ketuntasan per Kelas
+                        </h3>
+                        <div class="flex gap-2">
+                            <!-- Tombol Export PDF -->
+                            <button onclick="exportRecapToPdf('scoreSummaryTable', 'Kualifikasi_Ketuntasan_per_Kelas')" class="px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shadow-md">
+                                <i class="fa-solid fa-file-pdf"></i> PDF
+                            </button>
+                            <!-- Tombol Export Excel -->
+                            <button onclick="exportRecapToExcel('scoreSummaryTable', 'Kualifikasi_Ketuntasan_per_Kelas')" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shadow-md">
+                                <i class="fa-solid fa-file-excel"></i> Excel
+                            </button>
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto relative min-h-[220px]">
+                        <table id="scoreSummaryTable" class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-slate-50/70 dark:bg-slate-900/30 border-b border-slate-100 dark:border-slate-800 text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
+                                    <th class="py-3.5 px-4 text-center w-16">No</th>
+                                    <th class="py-3.5 px-4">Kelas</th>
+                                    <th class="py-3.5 px-4 text-center">Kriteria KKM</th>
+                                    <th class="py-3.5 px-4 text-center">Tuntas</th>
+                                    <th class="py-3.5 px-4 text-center">Remedial</th>
+                                    <th class="py-3.5 px-4 text-center">Rasio Ketuntasan</th>
+                                </tr>
+                            </thead>
+                            <tbody id="scoreSummaryBody" class="divide-y divide-slate-100 dark:divide-slate-800/50 text-sm">
+                                <!-- Data akan diinjeksi via JS -->
+                            </tbody>
+                        </table>
+                        <div id="scoreTableEmpty" class="absolute inset-0 flex items-center justify-center bg-white/90 dark:bg-slate-800/90 text-sm text-slate-400 hidden">
+                            Tidak ada data nilai untuk ditampilkan
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+    </main>
+
+    <!-- MODAL PRINT PREVIEW (F4 SHEET) -->
+    <div id="printPreviewModal" class="fixed inset-0 z-50 items-center justify-center bg-black/60 backdrop-blur-sm p-4 hidden">
+        <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-4xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden transition-all duration-300">
+            <!-- Modal Header -->
+            <div class="p-6 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50 dark:bg-slate-950/30">
+                <div class="flex flex-col">
+                    <h3 class="font-bold text-slate-900 dark:text-white text-base">Pratinjau Dokumen Cetak</h3>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">Konfigurasikan judul dan KOP dinamis Anda sebelum mencetak/mengekspor.</p>
+                </div>
+                <button onclick="closePrintPreview()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <!-- Header Controls Customization -->
+            <div class="px-6 py-4 bg-brand-50/50 dark:bg-slate-950/40 border-b border-brand-100 dark:border-slate-800 flex flex-wrap gap-4 items-center justify-between text-xs">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3 w-full">
+                    <div>
+                        <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Judul Dokumen</label>
+                        <input type="text" id="pdfDocTitleInput" value="LAPORAN HASIL MONITORING UJIAN ONLINE" oninput="updatePdfHeader()" class="w-full px-2 py-1.5 rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 dark:text-white">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Mata Pelajaran</label>
+                        <input type="text" id="pdfSubjectInput" value="INFORMATIKA" oninput="updatePdfHeader()" class="w-full px-2 py-1.5 rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 dark:text-white">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Tanggal Ujian</label>
+                        <input type="text" id="pdfDateInput" value="28 Mei 2026" oninput="updatePdfHeader()" class="w-full px-2 py-1.5 rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 dark:text-white">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Nama Kepala Sekolah</label>
+                        <input type="text" id="pdfPrincipalInput" value="Drs. H. Ari Laksana, M.Pd." oninput="updatePdfHeader()" class="w-full px-2 py-1.5 rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 dark:text-white">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Scrollable Paper Container (F4 Ratio) -->
+            <div class="flex-1 overflow-y-auto p-6 bg-slate-100 dark:bg-slate-950 flex justify-center">
+                <!-- F4 Canvas Area -->
+                <div id="modalPaperSheet" class="bg-white text-black shadow-lg border border-slate-200" style="width: 215mm; min-height: 330mm; padding: 1.5cm 1.5cm 1.5cm 1.5cm; box-sizing: border-box; font-family: 'Times New Roman', Times, serif;">
+                    
+                    <!-- KOP SURAT FORMAL -->
+                    <div class="text-center border-b-[3px] border-double border-black pb-3 mb-6 relative">
+                        <h4 class="text-xs uppercase tracking-wider font-bold m-0" style="font-size: 11pt;">Pemerintah Kabupaten Cirebon</h4>
+                        <h3 class="text-sm uppercase font-bold tracking-wide m-0" style="font-size: 13pt;">Dinas Pendidikan</h3>
+                        <h2 class="text-lg uppercase font-bold tracking-widest m-0" style="font-size: 15pt; line-height: 1.2;">SMP NEGERI 2 KARANGSEMBUNG</h2>
+                        <p class="m-0 text-xxs italic" style="font-size: 8pt; color: #444;">Jl. KH. Wahid Hasyim No. 137, Karangsembung, Cirebon, Kode Pos 45186</p>
+                    </div>
+
+                    <!-- JUDUL & INFORMASI SURAT -->
+                    <div class="text-center mb-6">
+                        <h3 id="pdfDocTitle" class="uppercase font-bold underline m-0 tracking-wide" style="font-size: 13pt;">LAPORAN HASIL MONITORING UJIAN ONLINE</h3>
+                        <p class="m-0 mt-1 italic text-xs" style="font-size: 10pt;">Tahun Ajaran 2025/2026</p>
+                    </div>
+
+                    <!-- META DATA ATRIBUT -->
+                    <div class="grid grid-cols-2 gap-4 text-xs mb-4" style="font-size: 10.5pt;">
+                        <div>
+                            <table style="border: none !important; width: auto !important;">
+                                <tr style="border: none !important;"><td style="border: none !important; padding: 1px 4px !important;" class="font-bold">Mata Pelajaran</td><td style="border: none !important; padding: 1px 4px !important;">:</td><td style="border: none !important; padding: 1px 4px !important;" id="pdfMetaSubject">INFORMATIKA</td></tr>
+                                <tr style="border: none !important;"><td style="border: none !important; padding: 1px 4px !important;" class="font-bold">Tanggal Pelaksanaan</td><td style="border: none !important; padding: 1px 4px !important;">:</td><td style="border: none !important; padding: 1px 4px !important;" id="pdfMetaDate">28 Mei 2026</td></tr>
+                            </table>
+                        </div>
+                        <div>
+                            <table style="border: none !important; width: auto !important; margin-left: auto;">
+                                <tr style="border: none !important;"><td style="border: none !important; padding: 1px 4px !important;" class="font-bold">KKM Rata-Rata</td><td style="border: none !important; padding: 1px 4px !important;">:</td><td style="border: none !important; padding: 1px 4px !important;" id="pdfMetaKkm">77</td></tr>
+                                <tr style="border: none !important;"><td style="border: none !important; padding: 1px 4px !important;" class="font-bold">Total Responden</td><td style="border: none !important; padding: 1px 4px !important;">:</td><td style="border: none !important; padding: 1px 4px !important;" id="pdfMetaTotal">0 Siswa</td></tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- TABEL RESPONDEN CETAK -->
+                    <div class="mb-8">
+                        <table class="w-full text-xs text-black" style="border: 1px solid black; border-collapse: collapse;">
+                            <thead>
+                                <tr style="background-color: #f3f4f6;">
+                                    <th style="border: 1px solid black; padding: 6px; text-align: center; width: 40px; font-weight: bold;">No</th>
+                                    <th style="border: 1px solid black; padding: 6px; font-weight: bold;">Nama Lengkap</th>
+                                    <th style="border: 1px solid black; padding: 6px; text-align: center; width: 80px; font-weight: bold;">Kelas</th>
+                                    <th style="border: 1px solid black; padding: 6px; text-align: center; width: 80px; font-weight: bold;">Nilai</th>
+                                    <th style="border: 1px solid black; padding: 6px; text-align: center; font-weight: bold;">Keterangan</th>
+                                </tr>
+                            </thead>
+                            <tbody id="pdfTableBody">
+                                <!-- Baris data injeksi -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- AREA TANDA TANGAN (SIGNATURE BLOCK) -->
+                    <div class="grid grid-cols-2 text-xs" style="font-size: 10.5pt; page-break-inside: avoid;">
+                        <div class="text-center">
+                            <p class="m-0">Mengetahui,</p>
+                            <p class="m-0 font-bold mb-16">Kepala Sekolah SMPN 2 Karangsembung</p>
+                            <p class="m-0 font-bold underline" id="pdfMetaPrincipal">Drs. H. Ari Laksana, M.Pd.</p>
+                            <p class="m-0 text-slate-500">NIP. 19680324 199412 1 002</p>
+                        </div>
+                        <div class="text-center">
+                            <p class="m-0">Karangsembung, 28 Mei 2026</p>
+                            <p class="m-0 font-bold mb-16">Pengawas Ujian / Guru Mapel</p>
+                            <p class="m-0 font-bold underline">Panitia Ujian Spendaka</p>
+                            <p class="m-0 text-slate-500">NIP. -</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Modal Footer Controls -->
+            <div class="p-6 border-t border-slate-200 dark:border-slate-800 flex justify-between bg-slate-50 dark:bg-slate-950/30">
+                <button onclick="closePrintPreview()" class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-xl font-bold transition-all text-sm">
+                    Tutup
+                </button>
+                <div class="flex gap-2">
+                    <button onclick="printBrowser()" class="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-100 dark:text-slate-900 text-white rounded-xl font-bold transition-all text-sm flex items-center gap-2">
+                        <i class="fa-solid fa-print"></i> Cetak Sekarang
+                    </button>
+                    <button onclick="exportToPdf()" class="px-5 py-2.5 bg-rose-600 hover:bg-rose-700 text-white rounded-xl font-bold transition-all text-sm flex items-center gap-2 shadow-lg shadow-rose-500/20">
+                        <i class="fa-solid fa-file-pdf"></i> Unduh PDF F4
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="mt-auto border-t border-slate-200 dark:border-slate-800 py-6 bg-white dark:bg-slate-900 text-center text-xs text-slate-400">
+        <p>© 2026 <span class="font-bold text-slate-600 dark:text-slate-300">Spendaka ICT Team</span>. Dikembangkan oleh <span class="font-bold text-rose-600">Ari Laksana</span> &bull; Semua Hak Cipta Dilindungi.</p>
+    </footer>
+
+    <!-- MAIN JAVASCRIPT SYSTEM -->
+    <script>
+        // CONFIGURASI & DATA UTAMA
+        let allStudentsData = []; // Menyimpan semua respon orisinil Google Sheets
+        let filteredStudentsData = []; // Menyimpan respon pasca pencarian & filter kelas
+        
+        // Aturan Default Kuota & KKM Siswa per-kelas (SMP Negeri 2 Karangsembung)
+        const DEFAULT_QUOTA = {
+            "7A": 32, "7B": 32, "7C": 31, "7D": 32,
+            "8A": 32, "8B": 30, "8C": 32, "8D": 31,
+            "9A": 32, "9B": 32, "9C": 32, "9D": 32
+        };
+
+        let KKM_RULES = {
+            "7": 75,
+            "8": 76,
+            "9": 80
+        };
+
+        // Pagination State
+        let currentPage = 1;
+        const rowsPerPage = 10;
+
+        // DEMO DATA SIMULASI (Ketika Belum/Tidak ada Koneksi Google Sheets)
+        const DEMO_SIMULATION_RESPONSES = [
+            {"timestamp": "28/05/2026 08:01:22", "name": "Ahmad Fauzi", "class": "9A", "score": "95 / 100"},
+            {"timestamp": "28/05/2026 08:02:15", "name": "Budi Setiawan", "class": "9B", "score": "75 / 100"},
+            {"timestamp": "28/05/2026 08:03:50", "name": "Citra Lestari", "class": "8A", "score": "88 / 100"},
+            {"timestamp": "28/05/2026 08:05:11", "name": "Dewi Sartika", "class": "8B", "score": "60 / 100"},
+            {"timestamp": "28/05/2026 08:07:01", "name": "Eko Prasetyo", "class": "7A", "score": "78 / 100"},
+            {"timestamp": "28/05/2026 08:09:44", "name": "Farhan Alamsyah", "class": "7B", "score": "55 / 100"},
+            {"timestamp": "28/05/2026 08:11:10", "name": "Gita Rahmawati", "class": "9A", "score": "100 / 100"},
+            {"timestamp": "28/05/2026 08:12:35", "name": "Hadi Wijaya", "class": "9C", "score": "82 / 100"},
+            {"timestamp": "28/05/2026 08:15:00", "name": "Indah Permata", "class": "8C", "score": "76 / 100"},
+            {"timestamp": "28/05/2026 08:18:22", "name": "Joko Susilo", "class": "8D", "score": "45 / 100"},
+            {"timestamp": "28/05/2026 08:20:11", "name": "Kiki Amelia", "class": "7C", "score": "85 / 100"},
+            {"timestamp": "28/05/2026 08:21:40", "name": "Lutfi Hakim", "class": "7D", "score": "74 / 100"},
+            {"timestamp": "28/05/2026 08:24:15", "name": "Mega Utami", "class": "9B", "score": "90 / 100"},
+            {"timestamp": "28/05/2026 08:26:02", "name": "Naufal Rasyid", "class": "9D", "score": "65 / 100"},
+            {"timestamp": "28/05/2026 08:29:50", "name": "Olivia Putri", "class": "8A", "score": "92 / 100"}
+        ];
+
+        // INISIALISASI SAAT HALAMAN SELESAI DI-LOAD
+        window.onload = function() {
+            initTheme();
+            loadDemoData(); // Load demo data secara default agar dashboard tidak kosong
+        };
+
+        // THEME / DARK MODE CONTROLLER
+        function initTheme() {
+            const toggleBtn = document.getElementById('themeToggle');
+            if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+            toggleBtn.addEventListener('click', () => {
+                if (document.documentElement.classList.contains('dark')) {
+                    document.documentElement.classList.remove('dark');
+                    localStorage.setItem('theme', 'light');
+                } else {
+                    document.documentElement.classList.add('dark');
+                    localStorage.setItem('theme', 'dark');
+                }
+            });
+        }
+
+        // FUNGSI SWITCH MENU ANTARA DAFTAR TABEL & ANALISIS REKAPITULASI
+        function switchMenu(tab) {
+            const btnTable = document.getElementById('tabButtonTable');
+            const btnCharts = document.getElementById('tabButtonCharts');
+            const contentTable = document.getElementById('tabContentTable');
+            const contentCharts = document.getElementById('tabContentCharts');
+
+            if (tab === 'table') {
+                btnTable.className = "flex items-center gap-2 py-3.5 px-6 font-bold text-sm border-b-2 border-brand-600 text-brand-600 dark:text-brand-500 transition-all duration-200";
+                btnCharts.className = "flex items-center gap-2 py-3.5 px-6 font-semibold text-sm border-b-2 border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 transition-all duration-200";
+                contentTable.classList.remove('hidden');
+                contentCharts.classList.add('hidden');
+            } else {
+                btnTable.className = "flex items-center gap-2 py-3.5 px-6 font-semibold text-sm border-b-2 border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 transition-all duration-200";
+                btnCharts.className = "flex items-center gap-2 py-3.5 px-6 font-bold text-sm border-b-2 border-brand-600 text-brand-600 dark:text-brand-500 transition-all duration-200";
+                contentTable.classList.add('hidden');
+                contentCharts.classList.remove('hidden');
+                renderRecapTables();
+            }
+        }
+
+        // UPDATE BATAS KKM DARI INPUT MANUAL USER
+        function updateKkmValues() {
+            const k7 = parseInt(document.getElementById('kkmClass7').value) || 0;
+            const k8 = parseInt(document.getElementById('kkmClass8').value) || 0;
+            const k9 = parseInt(document.getElementById('kkmClass9').value) || 0;
+            
+            KKM_RULES["7"] = k7;
+            KKM_RULES["8"] = k8;
+            KKM_RULES["9"] = k9;
+            
+            // Hitung ulang status dan render ulang
+            processRawData(allStudentsData);
+        }
+
+        // LOAD DEMO DATA SIMULATION
+        function loadDemoData() {
+            setLoadingState(true);
+            setTimeout(() => {
+                allStudentsData = JSON.parse(JSON.stringify(DEMO_SIMULATION_RESPONSES));
+                processRawData(allStudentsData);
+                setLoadingState(false);
+                updateStatusIndicator("Data Demo Berhasil Dimuat", "amber");
+            }, 500);
+        }
+
+        // LOADING STATE UI ROTATOR
+        function setLoadingState(isLoading) {
+            const icon = document.getElementById('refreshIcon');
+            if (isLoading) {
+                icon.classList.add('animate-spin');
+            } else {
+                icon.classList.remove('animate-spin');
+            }
+        }
+
+        // UPDATE KETERANGAN STATUS KONEKSI DI BAWAH LINK SPREADSHEET
+        function updateStatusIndicator(message, color) {
+            const dot = document.getElementById('statusIndicatorDot');
+            const text = document.getElementById('statusText');
+            
+            text.textContent = message;
+            dot.className = "inline-block w-2.5 h-2.5 rounded-full";
+            if (color === "emerald") {
+                dot.classList.add("bg-emerald-500");
+                document.getElementById('activeIndicator').classList.remove('hidden');
+            } else if (color === "amber") {
+                dot.classList.add("bg-amber-400");
+                document.getElementById('activeIndicator').classList.add('hidden');
+            } else {
+                dot.classList.add("bg-rose-500");
+                document.getElementById('activeIndicator').classList.add('hidden');
+            }
+        }
+
+        // TARIK DATA REAL-TIME DARI GOOGLE SPREADSHEETS (VIA EXPORT CSV)
+        function loadSpreadsheetData() {
+            const urlInput = document.getElementById('spreadsheetUrl').value.trim();
+            if (!urlInput) {
+                alert("Silakan isi URL Google Spreadsheet Anda terlebih dahulu!");
+                return;
+            }
+
+            setLoadingState(true);
+            updateStatusIndicator("Menghubungkan ke Google Sheets...", "amber");
+
+            // Transformasikan URL edit biasa menjadi tautan ekspor CSV murni
+            let spreadsheetId = "";
+            const matches = urlInput.match(/\/d\/([a-zA-Z0-9-_]+)/);
+            if (matches && matches[1]) {
+                spreadsheetId = matches[1];
+            } else {
+                alert("Format Tautan Google Spreadsheet Tidak Valid. Harap salin tautan dengan benar.");
+                setLoadingState(false);
+                updateStatusIndicator("Koneksi Gagal (Kesalahan Tautan)", "rose");
+                return;
+            }
+
+            const csvUrl = `https://docs.google.com/spreadsheets/d/${spreadsheetId}/export?format=csv&gid=0`;
+
+            fetch(csvUrl)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Gagal mengambil data dari endpoint ekspor.");
+                    }
+                    return response.text();
+                })
+                .then(csvText => {
+                    parseCsvData(csvText);
+                })
+                .catch(error => {
+                    console.error(error);
+                    alert("Gagal membaca Spreadsheet. Pastikan opsi 'Siapa saja yang memiliki link dapat melihat' sudah aktif di Google Drive.");
+                    setLoadingState(false);
+                    updateStatusIndicator("Koneksi Gagal / Tautan Diproteksi", "rose");
+                });
+        }
+
+        // PARSER FORMAT CSV MENJADI STRUKTUR DATA JSON YANG SIAP DIKONSUMSI
+        function parseCsvData(csvText) {
+            const lines = csvText.split(/\r?\n/);
+            if (lines.length < 2) {
+                alert("Spreadsheet terbaca kosong atau tidak memiliki data.");
+                setLoadingState(false);
+                return;
+            }
+
+            // Pecah baris pertama untuk membaca header
+            const headers = splitCsvLine(lines[0]);
+            
+            // Mencari indeks kolom esensial secara adaptif
+            let indexTimestamp = -1;
+            let indexName = -1;
+            let indexClass = -1;
+            let indexScore = -1;
+
+            headers.forEach((header, idx) => {
+                const lower = header.toLowerCase().replace(/[^a-z]/g, '');
+                if (lower.includes("timestamp") || lower.includes("tanggal") || lower.includes("waktu")) {
+                    indexTimestamp = idx;
+                } else if (lower.includes("nama") || lower.includes("namalengkap")) {
+                    indexName = idx;
+                } else if (lower.includes("kelas")) {
+                    indexClass = idx;
+                } else if (lower.includes("score") || lower.includes("skor") || lower.includes("nilai")) {
+                    indexScore = idx;
+                }
+            });
+
+            // Fallback jika pencarian adaptif gagal
+            if (indexName === -1 || indexScore === -1) {
+                indexTimestamp = 0;
+                indexScore = 1;
+                indexName = 2;
+                indexClass = 3;
+            }
+
+            const parsedData = [];
+            for (let i = 1; i < lines.length; i++) {
+                if (!lines[i].trim()) continue;
+                const columns = splitCsvLine(lines[i]);
+                if (columns.length < 2) continue;
+
+                parsedData.push({
+                    timestamp: columns[indexTimestamp] || "-",
+                    name: columns[indexName] || "Tanpa Nama",
+                    class: (columns[indexClass] || "Umum").toUpperCase().trim(),
+                    score: columns[indexScore] || "0 / 100"
+                });
+            }
+
+            allStudentsData = parsedData;
+            processRawData(allStudentsData);
+            setLoadingState(false);
+            updateStatusIndicator("Koneksi Berhasil & Real-Time Aktif", "emerald");
+        }
+
+        // SPLITTER BARIS CSV DENGAN MEMPERHITUNGKAN KUTIP GANDA (DOUBLE QUOTES CAPTURING)
+        function splitCsvLine(line) {
+            const result = [];
+            let current = "";
+            let inQuotes = false;
+            for (let i = 0; i < line.length; i++) {
+                const char = line[i];
+                if (char === '"') {
+                    inQuotes = !inQuotes;
+                } else if (char === ',' && !inQuotes) {
+                    result.push(current.trim());
+                    current = "";
+                } else {
+                    current += char;
+                }
+            }
+            result.push(current.trim());
+            return result.map(val => val.replace(/^"|"$/g, ''));
+        }
+
+        // PENGHITUNG STATISTIK UTAMA (AVERAGE, HIGHEST, LOWEST, TOTALS)
+        function processRawData(data) {
+            if (!data || data.length === 0) {
+                renderEmptyTable();
+                return;
+            }
+
+            let sum = 0;
+            let highest = -Infinity;
+            let lowest = Infinity;
+            const uniqueClasses = new Set();
+
+            data.forEach(item => {
+                // Konversi string skor (misal "80 / 100" atau "70" atau "8.5") menjadi angka bulat desimal
+                let numericScore = 0;
+                if (item.score.includes("/")) {
+                    numericScore = parseFloat(item.score.split("/")[0].trim()) || 0;
+                } else {
+                    numericScore = parseFloat(item.score) || 0;
+                }
+
+                // Normalisasi jika rentang skor menggunakan rasio maksimal desimal 10 ke 100
+                if (numericScore <= 10 && !item.score.includes("/10")) {
+                    numericScore = numericScore * 10;
+                }
+
+                item.numericScore = Math.round(numericScore);
+                
+                // Cek Aturan KKM berdasarkan digit depan kelas (7, 8, atau 9)
+                const classDigit = item.class.charAt(0);
+                const limitKkm = KKM_RULES[classDigit] || 75; // Default fallback KKM jika kelas bukan 7, 8, atau 9 adalah 75
+                item.kkmLimit = limitKkm;
+                item.isPassed = item.numericScore >= limitKkm;
+
+                sum += item.numericScore;
+                if (item.numericScore > highest) highest = item.numericScore;
+                if (item.numericScore < lowest) lowest = item.numericScore;
+
+                if (item.class) {
+                    uniqueClasses.add(item.class);
+                }
+            });
+
+            // Update Panel Atas Statistik
+            document.getElementById('statTotal').textContent = data.length;
+            document.getElementById('statAverage').textContent = (sum / data.length).toFixed(1);
+            document.getElementById('statHighest').textContent = highest;
+            document.getElementById('statLowest').textContent = lowest;
+
+            // Update Dropdown Filter Kelas
+            const classFilter = document.getElementById('classFilter');
+            classFilter.innerHTML = '<option value="">Semua Kelas</option>';
+            const sortedClasses = Array.from(uniqueClasses).sort();
+            sortedClasses.forEach(cls => {
+                const opt = document.createElement('option');
+                opt.value = cls;
+                opt.textContent = `Kelas ${cls}`;
+                classFilter.appendChild(opt);
+            });
+
+            filterData();
+        }
+
+        // PENYARING DATA TERHADAP INPUT CARI & FILTER DROPDOWN KELAS
+        function filterData() {
+            const query = document.getElementById('searchInput').value.toLowerCase().trim();
+            const selectedClass = document.getElementById('classFilter').value;
+
+            filteredStudentsData = allStudentsData.filter(student => {
+                const matchName = student.name.toLowerCase().includes(query);
+                const matchClass = selectedClass === "" || student.class === selectedClass;
+                return matchName && matchClass;
+            });
+
+            currentPage = 1;
+            renderTable();
+        }
+
+        // RENDER DATA TABEL UTAMA (DENGAN PAGINATION)
+        function renderTable() {
+            const tbody = document.getElementById('studentTableBody');
+            const emptyState = document.getElementById('emptyState');
+            tbody.innerHTML = '';
+
+            if (filteredStudentsData.length === 0) {
+                emptyState.classList.remove('hidden');
+                document.getElementById('tableSummary').textContent = "Menampilkan 0 dari 0 peserta";
+                document.getElementById('prevBtn').disabled = true;
+                document.getElementById('nextBtn').disabled = true;
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+
+            const startIndex = (currentPage - 1) * rowsPerPage;
+            const endIndex = Math.min(startIndex + rowsPerPage, filteredStudentsData.length);
+            const paginatedData = filteredStudentsData.slice(startIndex, endIndex);
+
+            paginatedData.forEach((student, index) => {
+                const globalIndex = startIndex + index + 1;
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50 dark:hover:bg-slate-900/50 transition-colors border-b border-slate-100 dark:border-slate-800/40";
+                
+                const statusBadge = student.isPassed 
+                    ? `<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-400"><i class="fa-solid fa-circle-check"></i> Tuntas</span>`
+                    : `<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-rose-100 text-rose-800 dark:bg-rose-950/40 dark:text-rose-400"><i class="fa-solid fa-triangle-exclamation"></i> Remedial</span>`;
+
+                tr.innerHTML = `
+                    <td class="py-4 px-6 text-center font-semibold text-slate-400">${globalIndex}</td>
+                    <td class="py-4 px-6 font-bold text-slate-900 dark:text-white">${student.name}</td>
+                    <td class="py-4 px-6 text-slate-600 dark:text-slate-300 font-semibold">${student.class}</td>
+                    <td class="py-4 px-6 font-extrabold text-brand-600 dark:text-brand-400">${student.numericScore} <span class="text-xs font-normal text-slate-400">/ 100</span></td>
+                    <td class="py-4 px-6 text-slate-400 dark:text-slate-500 text-xs">${student.timestamp}</td>
+                    <td class="py-4 px-6 text-center">${statusBadge}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            // Update Summary Text & Pagination Buttons
+            document.getElementById('tableSummary').textContent = `Menampilkan ${startIndex + 1} - ${endIndex} dari ${filteredStudentsData.length} peserta`;
+            document.getElementById('prevBtn').disabled = currentPage === 1;
+            document.getElementById('nextBtn').disabled = endIndex >= filteredStudentsData.length;
+        }
+
+        // FUNGSI NAVIGASI TOMBOL PAGINATION
+        function changePage(direction) {
+            currentPage += direction;
+            renderTable();
+        }
+
+        function renderEmptyTable() {
+            document.getElementById('studentTableBody').innerHTML = '';
+            document.getElementById('emptyState').classList.remove('hidden');
+        }
+
+        // GENERASI & RENDER ANALISIS REKAPITULASI DUA TABEL DI MENU REKAPITULASI
+        function renderRecapTables() {
+            // Dapatkan seluruh daftar kelas yang unik dari data
+            const classesMap = {};
+            
+            // Siapkan struktur data awal berdasar Kuota Spendaka
+            Object.keys(DEFAULT_QUOTA).forEach(cls => {
+                classesMap[cls] = {
+                    joined: 0,
+                    tuntas: 0,
+                    remedial: 0,
+                    quota: DEFAULT_QUOTA[cls]
+                };
+            });
+
+            // Masukkan data respon real-time yang ada
+            allStudentsData.forEach(student => {
+                if (!classesMap[student.class]) {
+                    classesMap[student.class] = { joined: 0, tuntas: 0, remedial: 0, quota: 32 }; // default kuota baru jika kustom
+                }
+                classesMap[student.class].joined += 1;
+                if (student.isPassed) {
+                    classesMap[student.class].tuntas += 1;
+                } else {
+                    classesMap[student.class].remedial += 1;
+                }
+            });
+
+            const sortedClassesKeys = Object.keys(classesMap).sort();
+
+            // Render Tabel 1: Keikutsertaan per-Kelas
+            const classSummaryBody = document.getElementById('classSummaryBody');
+            classSummaryBody.innerHTML = '';
+            
+            if (sortedClassesKeys.length === 0) {
+                document.getElementById('classTableEmpty').classList.remove('hidden');
+            } else {
+                document.getElementById('classTableEmpty').classList.add('hidden');
+                sortedClassesKeys.forEach((clsKey, index) => {
+                    const info = classesMap[clsKey];
+                    const absence = Math.max(0, info.quota - info.joined);
+                    const percentage = info.quota > 0 ? ((info.joined / info.quota) * 100).toFixed(1) : "0.0";
+                    
+                    const tr = document.createElement('tr');
+                    tr.className = "hover:bg-slate-50 dark:hover:bg-slate-900/50 transition-colors border-b border-slate-100 dark:border-slate-800/40";
+                    tr.innerHTML = `
+                        <td class="py-3 px-4 text-center font-bold text-slate-400">${index + 1}</td>
+                        <td class="py-3 px-4 font-bold text-slate-800 dark:text-slate-200">Kelas ${clsKey}</td>
+                        <td class="py-3 px-4 text-center font-semibold text-emerald-600 dark:text-emerald-400">${info.joined} Siswa</td>
+                        <td class="py-3 px-4 text-center font-semibold text-amber-600 dark:text-amber-400">${absence} Siswa</td>
+                        <td class="py-3 px-4 text-center font-semibold text-slate-500">${info.quota} Siswa</td>
+                        <td class="py-3 px-4 text-center font-extrabold text-brand-600 dark:text-brand-400">${percentage}%</td>
+                    `;
+                    classSummaryBody.appendChild(tr);
+                });
+            }
+
+            // Render Tabel 2: Distribusi Ketuntasan (KKM)
+            const scoreSummaryBody = document.getElementById('scoreSummaryBody');
+            scoreSummaryBody.innerHTML = '';
+            
+            if (sortedClassesKeys.length === 0) {
+                document.getElementById('scoreTableEmpty').classList.remove('hidden');
+            } else {
+                document.getElementById('scoreTableEmpty').classList.add('hidden');
+                sortedClassesKeys.forEach((clsKey, index) => {
+                    const info = classesMap[clsKey];
+                    const classDigit = clsKey.charAt(0);
+                    const limitKkm = KKM_RULES[classDigit] || 75;
+                    const passingRate = info.joined > 0 ? ((info.tuntas / info.joined) * 100).toFixed(1) : "0.0";
+
+                    const tr = document.createElement('tr');
+                    tr.className = "hover:bg-slate-50 dark:hover:bg-slate-900/50 transition-colors border-b border-slate-100 dark:border-slate-800/40";
+                    tr.innerHTML = `
+                        <td class="py-3 px-4 text-center font-bold text-slate-400">${index + 1}</td>
+                        <td class="py-3 px-4 font-bold text-slate-800 dark:text-slate-200">Kelas ${clsKey}</td>
+                        <td class="py-3 px-4 text-center font-bold text-slate-500">${limitKkm}</td>
+                        <td class="py-3 px-4 text-center font-semibold text-emerald-600 dark:text-emerald-400">${info.tuntas} Siswa</td>
+                        <td class="py-3 px-4 text-center font-semibold text-rose-600 dark:text-rose-400">${info.remedial} Siswa</td>
+                        <td class="py-3 px-4 text-center font-extrabold text-indigo-600 dark:text-indigo-400">${passingRate}%</td>
+                    `;
+                    scoreSummaryBody.appendChild(tr);
+                });
+            }
+        }
+
+        // FUNGSI PRINT PREVIEW MODAL INTEGRATION
+        function openPrintPreview() {
+            document.getElementById('printPreviewModal').classList.remove('hidden');
+            document.getElementById('printPreviewModal').classList.add('flex');
+            
+            // Tarik rata-rata KKM yang diset user saat ini
+            const avgKkm = Math.round((KKM_RULES["7"] + KKM_RULES["8"] + KKM_RULES["9"]) / 3);
+            document.getElementById('pdfMetaKkm').textContent = avgKkm;
+            
+            updatePdfHeader();
+            renderPdfRows();
+        }
+
+        function closePrintPreview() {
+            document.getElementById('printPreviewModal').classList.add('hidden');
+            document.getElementById('printPreviewModal').classList.remove('flex');
+        }
+
+        // UPDATE JUDUL DINAMIS DI SPREADSHEET CANVAS PDF PREVIEW
+        function updatePdfHeader() {
+            const titleVal = document.getElementById('pdfDocTitleInput').value.toUpperCase();
+            const subjectVal = document.getElementById('pdfSubjectInput').value.toUpperCase();
+            const dateVal = document.getElementById('pdfDateInput').value;
+            const principalVal = document.getElementById('pdfPrincipalInput').value;
+
+            document.getElementById('pdfDocTitle').textContent = titleVal;
+            document.getElementById('pdfMetaSubject').textContent = subjectVal;
+            document.getElementById('pdfMetaDate').textContent = dateVal;
+            document.getElementById('pdfMetaPrincipal').textContent = principalVal;
+        }
+
+        // RENDER BARIS SISWA DALAM TABEL PRATINJAU CETAK
+        function renderPdfRows() {
+            const tbody = document.getElementById('pdfTableBody');
+            tbody.innerHTML = '';
+
+            const dataToRender = filteredStudentsData.length > 0 ? filteredStudentsData : allStudentsData;
+
+            if (dataToRender.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; padding: 12px; font-style: italic;">Tidak ada data untuk dicetak</td></tr>`;
+                document.getElementById('pdfMetaTotal').textContent = "0 Siswa";
+                return;
+            }
+
+            document.getElementById('pdfMetaTotal').textContent = `${dataToRender.length} Siswa`;
+
+            dataToRender.forEach((student, index) => {
+                const tr = document.createElement('tr');
+                const statusKeterangan = student.isPassed ? "TUNTAS" : "REMEDIAL";
+                tr.innerHTML = `
+                    <td style="border: 1px solid black; padding: 5px; text-align: center;">${index + 1}</td>
+                    <td style="border: 1px solid black; padding: 5px; font-weight: bold;">${student.name}</td>
+                    <td style="border: 1px solid black; padding: 5px; text-align: center;">${student.class}</td>
+                    <td style="border: 1px solid black; padding: 5px; text-align: center; font-weight: bold;">${student.numericScore}</td>
+                    <td style="border: 1px solid black; padding: 5px; text-align: center; font-weight: bold; color: ${student.isPassed ? '#047857' : '#b91c1c'};">${statusKeterangan}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // EKSPOR FORMAT F4 SPREADSHEET KE FILE PDF MENGGUNAKAN HTML2PDF.JS
+        function exportToPdf() {
+            const element = document.getElementById('modalPaperSheet');
+            const opt = {
+                margin:       0.2,
+                filename:     `Laporan_Monitoring_Ujian_${document.getElementById('pdfSubjectInput').value}.pdf`,
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true },
+                jsPDF:        { unit: 'in', format: 'legal', orientation: 'portrait' } // Menggunakan Format Legal (Ekuivalen mendekati F4)
+            };
+            
+            html2pdf().set(opt).from(element).save();
+        }
+
+        // PRINT LANGSUNG MEMANFAATKAN ENGINE SISTEM OPERASI UTAMA
+        function printBrowser() {
+            window.print();
+        }
+
+        // EKSPOR REKAPITULASI MANUAL KE FILE PDF
+        function exportRecapToPdf(tableId, filename) {
+            const element = document.getElementById(tableId);
+            const opt = {
+                margin:       0.5,
+                filename:     `${filename}.pdf`,
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2 },
+                jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+            };
+            html2pdf().set(opt).from(element).save();
+        }
+
+        // EKSPOR REKAPITULASI MANUAL KE FILE EXCEL (XLSX)
+        function exportRecapToExcel(tableId, filename) {
+            const table = document.getElementById(tableId);
+            const workbook = XLSX.utils.table_to_book(table, { sheet: "Rekapitulasi" });
+            XLSX.writeFile(workbook, `${filename}.xlsx`);
+        }
+    </script>
+</body>
+</html>
