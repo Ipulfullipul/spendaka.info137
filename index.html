@@ -294,7 +294,7 @@
 
                             <!-- Dropdown Class Filter -->
                             <select id="classFilter" onchange="filterData()"
-                                class="px-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 transition-all text-slate-600 dark:text-slate-300 font-bold cursor-pointer">
+                                class="px-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 transition-all text-slate-600 dark:text-slate-300 font-semibold cursor-pointer font-bold">
                                 <option value="">Semua Kelas</option>
                             </select>
 
@@ -476,461 +476,431 @@
                         <input type="text" id="pdfSubjectInput" value="INFORMATIKA" oninput="updatePdfHeader()" class="w-full px-2 py-1.5 rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 dark:text-white">
                     </div>
                     <div>
-                        <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Tanggal Ujian</label>
-                        <input type="text" id="pdfDateInput" value="28 Mei 2026" oninput="updatePdfHeader()" class="w-full px-2 py-1.5 rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 dark:text-white">
+                        <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Nama Sekolah</label>
+                        <input type="text" id="pdfSchoolInput" value="SMP NEGERI 2 KARANGSEMBUNG" oninput="updatePdfHeader()" class="w-full px-2 py-1.5 rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 dark:text-white">
                     </div>
                     <div>
-                        <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Nama Kepala Sekolah</label>
-                        <input type="text" id="pdfPrincipalInput" value="Drs. H. Ari Laksana, M.Pd." oninput="updatePdfHeader()" class="w-full px-2 py-1.5 rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 dark:text-white">
+                        <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Tahun Pelajaran</label>
+                        <input type="text" id="pdfYearInput" value="2025/2026" oninput="updatePdfHeader()" class="w-full px-2 py-1.5 rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 dark:text-white">
                     </div>
                 </div>
             </div>
 
-            <!-- Scrollable Paper Container (F4 Ratio) -->
-            <div class="flex-1 overflow-y-auto p-6 bg-slate-100 dark:bg-slate-950 flex justify-center">
-                <!-- F4 Canvas Area -->
-                <div id="modalPaperSheet" class="bg-white text-black shadow-lg border border-slate-200" style="width: 215mm; min-height: 330mm; padding: 1.5cm 1.5cm 1.5cm 1.5cm; box-sizing: border-box; font-family: 'Times New Roman', Times, serif;">
-                    
-                    <!-- KOP SURAT FORMAL -->
-                    <div class="text-center border-b-[3px] border-double border-black pb-3 mb-6 relative">
-                        <h4 class="text-xs uppercase tracking-wider font-bold m-0" style="font-size: 11pt;">Pemerintah Kabupaten Cirebon</h4>
-                        <h3 class="text-sm uppercase font-bold tracking-wide m-0" style="font-size: 13pt;">Dinas Pendidikan</h3>
-                        <h2 class="text-lg uppercase font-bold tracking-widest m-0" style="font-size: 15pt; line-height: 1.2;">SMP NEGERI 2 KARANGSEMBUNG</h2>
-                        <p class="m-0 text-xxs italic" style="font-size: 8pt; color: #444;">Jl. KH. Wahid Hasyim No. 137, Karangsembung, Cirebon, Kode Pos 45186</p>
+            <!-- Preview Sheet Container (Scrollable inside Modal) -->
+            <div class="flex-1 overflow-y-auto p-4 md:p-8 bg-slate-100 dark:bg-slate-950/50 flex justify-center">
+                <!-- Kertas F4 Lembar Pratinjau -->
+                <div id="modalPaperSheet" class="bg-white shadow-lg text-black relative flex flex-col" style="width: 215mm; min-height: 330mm; padding: 1.5cm; font-family: 'Times New Roman', Times, serif;">
+                    <!-- KOP DOKUMEN -->
+                    <div class="border-b-4 border-double border-black pb-3 text-center">
+                        <h1 id="previewSchoolTitle" class="text-xl font-bold uppercase tracking-wide">SMP NEGERI 2 KARANGSEMBUNG</h1>
+                        <p class="text-xs uppercase tracking-wider">Laporan Hasil Penilaian Akhir &amp; Pemantauan Ujian Berbasis Komputer</p>
+                        <p class="text-[11px] italic text-gray-600">Alamat: Jl. Karangsembung No. 2, Cirebon, Jawa Barat • Kode Pos: 45186</p>
                     </div>
 
-                    <!-- JUDUL & INFORMASI SURAT -->
-                    <div class="text-center mb-6">
-                        <h3 id="pdfDocTitle" class="uppercase font-bold underline m-0 tracking-wide" style="font-size: 13pt;">LAPORAN HASIL MONITORING UJIAN ONLINE</h3>
-                        <p class="m-0 mt-1 italic text-xs" style="font-size: 10pt;">Tahun Ajaran 2025/2026</p>
-                    </div>
-
-                    <!-- META DATA ATRIBUT -->
-                    <div class="grid grid-cols-2 gap-4 text-xs mb-4" style="font-size: 10.5pt;">
-                        <div>
-                            <table style="border: none !important; width: auto !important;">
-                                <tr style="border: none !important;"><td style="border: none !important; padding: 1px 4px !important;" class="font-bold">Mata Pelajaran</td><td style="border: none !important; padding: 1px 4px !important;">:</td><td style="border: none !important; padding: 1px 4px !important;" id="pdfMetaSubject">INFORMATIKA</td></tr>
-                                <tr style="border: none !important;"><td style="border: none !important; padding: 1px 4px !important;" class="font-bold">Tanggal Pelaksanaan</td><td style="border: none !important; padding: 1px 4px !important;">:</td><td style="border: none !important; padding: 1px 4px !important;" id="pdfMetaDate">28 Mei 2026</td></tr>
-                            </table>
-                        </div>
-                        <div>
-                            <table style="border: none !important; width: auto !important; margin-left: auto;">
-                                <tr style="border: none !important;"><td style="border: none !important; padding: 1px 4px !important;" class="font-bold">KKM Rata-Rata</td><td style="border: none !important; padding: 1px 4px !important;">:</td><td style="border: none !important; padding: 1px 4px !important;" id="pdfMetaKkm">77</td></tr>
-                                <tr style="border: none !important;"><td style="border: none !important; padding: 1px 4px !important;" class="font-bold">Total Responden</td><td style="border: none !important; padding: 1px 4px !important;">:</td><td style="border: none !important; padding: 1px 4px !important;" id="pdfMetaTotal">0 Siswa</td></tr>
-                            </table>
+                    <!-- JUDUL LAPORAN -->
+                    <div class="my-6 text-center">
+                        <h2 id="previewDocTitle" class="text-base font-bold uppercase decoration-1 underline tracking-wider">LAPORAN HASIL MONITORING UJIAN ONLINE</h2>
+                        <div class="flex justify-center gap-6 text-[11pt] mt-2 font-semibold">
+                            <span>Mata Pelajaran: <span id="previewSubject" class="font-bold">INFORMATIKA</span></span>
+                            <span>Tahun Pelajaran: <span id="previewYear" class="font-bold">2025/2026</span></span>
                         </div>
                     </div>
 
-                    <!-- TABEL RESPONDEN CETAK -->
-                    <div class="mb-8">
-                        <table class="w-full text-xs text-black" style="border: 1px solid black; border-collapse: collapse;">
+                    <!-- TABEL DATA UTAMA -->
+                    <div class="flex-1">
+                        <table class="w-full border-collapse">
                             <thead>
-                                <tr style="background-color: #f3f4f6;">
-                                    <th style="border: 1px solid black; padding: 6px; text-align: center; width: 40px; font-weight: bold;">No</th>
-                                    <th style="border: 1px solid black; padding: 6px; font-weight: bold;">Nama Lengkap</th>
-                                    <th style="border: 1px solid black; padding: 6px; text-align: center; width: 80px; font-weight: bold;">Kelas</th>
-                                    <th style="border: 1px solid black; padding: 6px; text-align: center; width: 80px; font-weight: bold;">Nilai</th>
-                                    <th style="border: 1px solid black; padding: 6px; text-align: center; font-weight: bold;">Keterangan</th>
+                                <tr class="bg-gray-100 font-bold text-center text-xs">
+                                    <th class="border border-black p-2 w-10">NO</th>
+                                    <th class="border border-black p-2 text-left">NAMA LENGKAP</th>
+                                    <th class="border border-black p-2 w-28">KELAS</th>
+                                    <th class="border border-black p-2 w-20 text-center">SKOR</th>
+                                    <th class="border border-black p-2 w-36 text-center">KKM</th>
+                                    <th class="border border-black p-2 w-28 text-center">STATUS</th>
                                 </tr>
                             </thead>
-                            <tbody id="pdfTableBody">
-                                <!-- Baris data injeksi -->
+                            <tbody id="previewTableBody">
+                                <!-- Baris data akan diisi secara dinamis -->
                             </tbody>
                         </table>
                     </div>
 
-                    <!-- AREA TANDA TANGAN (SIGNATURE BLOCK) -->
-                    <div class="grid grid-cols-2 text-xs" style="font-size: 10.5pt; page-break-inside: avoid;">
-                        <div class="text-center">
-                            <p class="m-0">Mengetahui,</p>
-                            <p class="m-0 font-bold mb-16">Kepala Sekolah SMPN 2 Karangsembung</p>
-                            <p class="m-0 font-bold underline" id="pdfMetaPrincipal">Drs. H. Ari Laksana, M.Pd.</p>
-                            <p class="m-0 text-slate-500">NIP. 19680324 199412 1 002</p>
+                    <!-- TANDA TANGAN / FOOTER DOKUMEN -->
+                    <div class="mt-8 flex justify-between text-[11pt]">
+                        <div>
+                            <p>Mengetahui,</p>
+                            <p class="font-bold mt-16">Kepala Sekolah SMPN 2 Karangsembung</p>
+                            <p class="text-xs text-gray-500">(_______________________)</p>
                         </div>
-                        <div class="text-center">
-                            <p class="m-0">Karangsembung, 28 Mei 2026</p>
-                            <p class="m-0 font-bold mb-16">Pengawas Ujian / Guru Mapel</p>
-                            <p class="m-0 font-bold underline">Panitia Ujian Spendaka</p>
-                            <p class="m-0 text-slate-500">NIP. -</p>
+                        <div class="text-right">
+                            <p>Karangsembung, <span id="currentDateString">28 Mei 2026</span></p>
+                            <p class="font-bold mt-16">Guru Mata Pelajaran</p>
+                            <p class="text-xs text-gray-500">(_______________________)</p>
                         </div>
                     </div>
-
                 </div>
             </div>
 
             <!-- Modal Footer Controls -->
-            <div class="p-6 border-t border-slate-200 dark:border-slate-800 flex justify-between bg-slate-50 dark:bg-slate-950/30">
-                <button onclick="closePrintPreview()" class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-xl font-bold transition-all text-sm">
-                    Tutup
+            <div class="p-6 border-t border-slate-200 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-950/30">
+                <button onclick="closePrintPreview()" class="px-5 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-xl text-sm font-bold transition-all">
+                    Batal
                 </button>
                 <div class="flex gap-2">
-                    <button onclick="printBrowser()" class="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-100 dark:text-slate-900 text-white rounded-xl font-bold transition-all text-sm flex items-center gap-2">
-                        <i class="fa-solid fa-print"></i> Cetak Sekarang
+                    <button onclick="exportToExcelMain()" class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-sm font-bold flex items-center gap-2 shadow-md transition-all">
+                        <i class="fa-solid fa-file-excel"></i> Ekspor ke Excel
                     </button>
-                    <button onclick="exportToPdf()" class="px-5 py-2.5 bg-rose-600 hover:bg-rose-700 text-white rounded-xl font-bold transition-all text-sm flex items-center gap-2 shadow-lg shadow-rose-500/20">
-                        <i class="fa-solid fa-file-pdf"></i> Unduh PDF F4
+                    <button onclick="exportToPdfMain()" class="px-5 py-2.5 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-sm font-bold flex items-center gap-2 shadow-md transition-all">
+                        <i class="fa-solid fa-file-pdf"></i> Ekspor ke PDF
+                    </button>
+                    <button onclick="window.print()" class="px-5 py-2.5 bg-brand-600 hover:bg-brand-700 text-white rounded-xl text-sm font-bold flex items-center gap-2 shadow-md transition-all">
+                        <i class="fa-solid fa-print"></i> Cetak Dokumen
                     </button>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- TOAST NOTIFICATION CONTAINER -->
+    <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
     <!-- FOOTER -->
-    <footer class="mt-auto border-t border-slate-200 dark:border-slate-800 py-6 bg-white dark:bg-slate-900 text-center text-xs text-slate-400">
-        <p>© 2026 <span class="font-bold text-slate-600 dark:text-slate-300">Spendaka ICT Team</span>. Dikembangkan oleh <span class="font-bold text-rose-600">Ari Laksana</span> &bull; Semua Hak Cipta Dilindungi.</p>
+    <footer class="bg-white dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800 py-6 mt-12 transition-colors duration-300">
+        <div class="max-w-7xl mx-auto px-4 text-center space-y-2">
+            <p class="text-xs text-slate-400 dark:text-slate-500">&copy; 2026 Examonlan PRO. All rights reserved.</p>
+            <p class="text-xs text-slate-400 dark:text-slate-500">
+                Dikembangkan untuk meningkatkan integritas ujian oleh <span class="font-bold text-slate-600 dark:text-slate-300">Ari Laksana</span>.
+            </p>
+        </div>
     </footer>
 
-    <!-- MAIN JAVASCRIPT SYSTEM -->
+    <!-- CORE LOGIC / JAVASCRIPT -->
     <script>
-        // CONFIGURASI & DATA UTAMA
-        let allStudentsData = []; // Menyimpan semua respon orisinil Google Sheets
-        let filteredStudentsData = []; // Menyimpan respon pasca pencarian & filter kelas
+        // Global State
+        let allStudents = [];
+        let filteredStudents = [];
+        let currentMenu = 'table';
         
-        // Aturan Default Kuota & KKM Siswa per-kelas (SMP Negeri 2 Karangsembung)
-        const DEFAULT_QUOTA = {
-            "7A": 32, "7B": 32, "7C": 31, "7D": 32,
-            "8A": 32, "8B": 30, "8C": 32, "8D": 31,
-            "9A": 32, "9B": 32, "9C": 32, "9D": 32
-        };
-
-        let KKM_RULES = {
-            "7": 75,
-            "8": 76,
-            "9": 80
-        };
-
         // Pagination State
         let currentPage = 1;
         const rowsPerPage = 10;
 
-        // DEMO DATA SIMULASI (Ketika Belum/Tidak ada Koneksi Google Sheets)
-        const DEMO_SIMULATION_RESPONSES = [
-            {"timestamp": "28/05/2026 08:01:22", "name": "Ahmad Fauzi", "class": "9A", "score": "95 / 100"},
-            {"timestamp": "28/05/2026 08:02:15", "name": "Budi Setiawan", "class": "9B", "score": "75 / 100"},
-            {"timestamp": "28/05/2026 08:03:50", "name": "Citra Lestari", "class": "8A", "score": "88 / 100"},
-            {"timestamp": "28/05/2026 08:05:11", "name": "Dewi Sartika", "class": "8B", "score": "60 / 100"},
-            {"timestamp": "28/05/2026 08:07:01", "name": "Eko Prasetyo", "class": "7A", "score": "78 / 100"},
-            {"timestamp": "28/05/2026 08:09:44", "name": "Farhan Alamsyah", "class": "7B", "score": "55 / 100"},
-            {"timestamp": "28/05/2026 08:11:10", "name": "Gita Rahmawati", "class": "9A", "score": "100 / 100"},
-            {"timestamp": "28/05/2026 08:12:35", "name": "Hadi Wijaya", "class": "9C", "score": "82 / 100"},
-            {"timestamp": "28/05/2026 08:15:00", "name": "Indah Permata", "class": "8C", "score": "76 / 100"},
-            {"timestamp": "28/05/2026 08:18:22", "name": "Joko Susilo", "class": "8D", "score": "45 / 100"},
-            {"timestamp": "28/05/2026 08:20:11", "name": "Kiki Amelia", "class": "7C", "score": "85 / 100"},
-            {"timestamp": "28/05/2026 08:21:40", "name": "Lutfi Hakim", "class": "7D", "score": "74 / 100"},
-            {"timestamp": "28/05/2026 08:24:15", "name": "Mega Utami", "class": "9B", "score": "90 / 100"},
-            {"timestamp": "28/05/2026 08:26:02", "name": "Naufal Rasyid", "class": "9D", "score": "65 / 100"},
-            {"timestamp": "28/05/2026 08:29:50", "name": "Olivia Putri", "class": "8A", "score": "92 / 100"}
-        ];
+        // KKM Config untuk jenjang SMP (Kelas 7, 8, 9)
+        let kkm7 = 75;
+        let kkm8 = 76;
+        let kkm9 = 80;
 
-        // INISIALISASI SAAT HALAMAN SELESAI DI-LOAD
-        window.onload = function() {
-            initTheme();
-            loadDemoData(); // Load demo data secara default agar dashboard tidak kosong
+        // Kuota Siswa Resmi per Kelas sesuai permintaan pengguna
+        const CLASS_QUOTAS = {
+            "7A": 32, "7B": 31, "7C": 32, "7D": 31, "7E": 32, "7F": 30,
+            "8A": 32, "8B": 33, "8C": 32, "8D": 32, "8E": 31, "8F": 31
         };
 
-        // THEME / DARK MODE CONTROLLER
-        function initTheme() {
-            const toggleBtn = document.getElementById('themeToggle');
-            if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        // Demo Data Realistis yang disesuaikan dengan kelas pengguna (7A-7F, 8A-8F)
+        const DEMO_DATA = [
+            { timestamp: "2026-05-28 08:01:23", nama: "AHMAD SYARIF", kelas: "7A", skor: 85, maxSkor: 100 },
+            { timestamp: "2026-05-28 08:02:44", nama: "BELLA CITRA", kelas: "7A", skor: 72, maxSkor: 100 },
+            { timestamp: "2026-05-28 08:03:15", nama: "DEDY CHANDRA", kelas: "7B", skor: 78, maxSkor: 100 },
+            { timestamp: "2026-05-28 08:04:10", nama: "EVI LISTIANA", kelas: "7C", skor: 92, maxSkor: 100 },
+            { timestamp: "2026-05-28 08:05:59", nama: "FAHRI HUSEIN", kelas: "8A", skor: 65, maxSkor: 100 },
+            { timestamp: "2026-05-28 08:07:01", nama: "GINA SELVIA", kelas: "8B", skor: 80, maxSkor: 100 },
+            { timestamp: "2026-05-28 08:09:12", nama: "HADI WIJAYA", kelas: "7A", skor: 98, maxSkor: 100 },
+            { timestamp: "2026-05-28 08:11:45", nama: "INDRA LESMANA", kelas: "8C", skor: 64, maxSkor: 100 },
+            { timestamp: "2026-05-28 08:13:02", nama: "JESSICA MILA", kelas: "8D", skor: 88, maxSkor: 100 },
+            { timestamp: "2026-05-28 08:15:30", nama: "KURNIAWAN", kelas: "7D", skor: 74, maxSkor: 100 },
+            { timestamp: "2026-05-28 08:16:40", nama: "LUHUT BINSAR", kelas: "8E", skor: 81, maxSkor: 100 },
+            { timestamp: "2026-05-28 08:18:11", kelas: "8F", nama: "MEGAWATI S.", skor: 76, maxSkor: 100 }
+        ];
+
+        // On Window Load
+        window.onload = function() {
+            // Inisialisasi tema
+            if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
                 document.documentElement.classList.add('dark');
             } else {
                 document.documentElement.classList.remove('dark');
             }
-            toggleBtn.addEventListener('click', () => {
+
+            // Inisialisasi KKM dari value element
+            kkm7 = parseInt(document.getElementById('kkmClass7').value) || 75;
+            kkm8 = parseInt(document.getElementById('kkmClass8').value) || 76;
+            kkm9 = parseInt(document.getElementById('kkmClass9').value) || 80;
+
+            // Masukkan demo data ke sistem secara instan
+            loadLocalData(DEMO_DATA);
+            showToast("Sukses", "Data simulasi SMP diaktifkan secara otomatis.", "info");
+
+            // Atur Tanggal Hari Ini di Modal Preview
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('currentDateString').textContent = new Date().toLocaleDateString('id-ID', options);
+
+            // Handler tombol Theme
+            document.getElementById('themeToggle').addEventListener('click', function() {
                 if (document.documentElement.classList.contains('dark')) {
                     document.documentElement.classList.remove('dark');
-                    localStorage.setItem('theme', 'light');
+                    localStorage.theme = 'light';
                 } else {
                     document.documentElement.classList.add('dark');
-                    localStorage.setItem('theme', 'dark');
+                    localStorage.theme = 'dark';
                 }
             });
-        }
+        };
 
-        // FUNGSI SWITCH MENU ANTARA DAFTAR TABEL & ANALISIS REKAPITULASI
-        function switchMenu(tab) {
-            const btnTable = document.getElementById('tabButtonTable');
-            const btnCharts = document.getElementById('tabButtonCharts');
-            const contentTable = document.getElementById('tabContentTable');
-            const contentCharts = document.getElementById('tabContentCharts');
+        // Custom Toast Notification System
+        function showToast(title, message, type = "success") {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `flex items-center gap-3 p-4 rounded-xl shadow-lg border text-xs font-semibold transition-all duration-300 transform translate-y-2 opacity-0 pointer-events-auto w-80 ${
+                type === 'success' ? 'bg-emerald-50 dark:bg-emerald-950/90 border-emerald-200 text-emerald-800 dark:text-emerald-300' :
+                type === 'error' ? 'bg-rose-50 dark:bg-rose-950/90 border-rose-200 text-rose-800 dark:text-rose-300' :
+                'bg-blue-50 dark:bg-blue-950/90 border-blue-200 text-blue-800 dark:text-blue-300'
+            }`;
 
-            if (tab === 'table') {
-                btnTable.className = "flex items-center gap-2 py-3.5 px-6 font-bold text-sm border-b-2 border-brand-600 text-brand-600 dark:text-brand-500 transition-all duration-200";
-                btnCharts.className = "flex items-center gap-2 py-3.5 px-6 font-semibold text-sm border-b-2 border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 transition-all duration-200";
-                contentTable.classList.remove('hidden');
-                contentCharts.classList.add('hidden');
-            } else {
-                btnTable.className = "flex items-center gap-2 py-3.5 px-6 font-semibold text-sm border-b-2 border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 transition-all duration-200";
-                btnCharts.className = "flex items-center gap-2 py-3.5 px-6 font-bold text-sm border-b-2 border-brand-600 text-brand-600 dark:text-brand-500 transition-all duration-200";
-                contentTable.classList.add('hidden');
-                contentCharts.classList.remove('hidden');
-                renderRecapTables();
-            }
-        }
+            const icon = type === 'success' ? '<i class="fa-solid fa-circle-check text-base"></i>' :
+                         type === 'error' ? '<i class="fa-solid fa-circle-exclamation text-base"></i>' :
+                                            '<i class="fa-solid fa-info-circle text-base"></i>';
 
-        // UPDATE BATAS KKM DARI INPUT MANUAL USER
-        function updateKkmValues() {
-            const k7 = parseInt(document.getElementById('kkmClass7').value) || 0;
-            const k8 = parseInt(document.getElementById('kkmClass8').value) || 0;
-            const k9 = parseInt(document.getElementById('kkmClass9').value) || 0;
-            
-            KKM_RULES["7"] = k7;
-            KKM_RULES["8"] = k8;
-            KKM_RULES["9"] = k9;
-            
-            // Hitung ulang status dan render ulang
-            processRawData(allStudentsData);
-        }
+            toast.innerHTML = `
+                <div class="flex-shrink-0">${icon}</div>
+                <div class="flex-1">
+                    <p class="font-bold">${title}</p>
+                    <p class="text-[11px] opacity-80 mt-0.5">${message}</p>
+                </div>
+            `;
+            container.appendChild(toast);
 
-        // LOAD DEMO DATA SIMULATION
-        function loadDemoData() {
-            setLoadingState(true);
+            // Trigger animation
             setTimeout(() => {
-                allStudentsData = JSON.parse(JSON.stringify(DEMO_SIMULATION_RESPONSES));
-                processRawData(allStudentsData);
-                setLoadingState(false);
-                updateStatusIndicator("Data Demo Berhasil Dimuat", "amber");
-            }, 500);
+                toast.classList.remove('translate-y-2', 'opacity-0');
+            }, 50);
+
+            // Remove toast
+            setTimeout(() => {
+                toast.classList.add('translate-y-2', 'opacity-0');
+                setTimeout(() => {
+                    toast.remove();
+                }, 300);
+            }, 4000);
         }
 
-        // LOADING STATE UI ROTATOR
-        function setLoadingState(isLoading) {
-            const icon = document.getElementById('refreshIcon');
-            if (isLoading) {
-                icon.classList.add('animate-spin');
-            } else {
-                icon.classList.remove('animate-spin');
-            }
-        }
-
-        // UPDATE KETERANGAN STATUS KONEKSI DI BAWAH LINK SPREADSHEET
-        function updateStatusIndicator(message, color) {
-            const dot = document.getElementById('statusIndicatorDot');
-            const text = document.getElementById('statusText');
+        // Muat Data Secara Lokal (baik demo ataupun sheet hasil parsing)
+        function loadLocalData(data) {
+            allStudents = data;
+            filteredStudents = [...allStudents];
             
-            text.textContent = message;
-            dot.className = "inline-block w-2.5 h-2.5 rounded-full";
-            if (color === "emerald") {
-                dot.classList.add("bg-emerald-500");
-                document.getElementById('activeIndicator').classList.remove('hidden');
-            } else if (color === "amber") {
-                dot.classList.add("bg-amber-400");
-                document.getElementById('activeIndicator').classList.add('hidden');
-            } else {
-                dot.classList.add("bg-rose-500");
-                document.getElementById('activeIndicator').classList.add('hidden');
-            }
+            buildClassDropdown();
+            filterData();
+            updateStats();
+            buildRecapTables();
         }
 
-        // TARIK DATA REAL-TIME DARI GOOGLE SPREADSHEETS (VIA EXPORT CSV)
-        function loadSpreadsheetData() {
+        // Muat Google Sheet secara Real-Time dengan Parsing Pintar
+        async function loadSpreadsheetData() {
             const urlInput = document.getElementById('spreadsheetUrl').value.trim();
+            const refreshIcon = document.getElementById('refreshIcon');
+            const statusDot = document.getElementById('statusIndicatorDot');
+            const statusText = document.getElementById('statusText');
+            const activeIndicator = document.getElementById('activeIndicator');
+
             if (!urlInput) {
-                alert("Silakan isi URL Google Spreadsheet Anda terlebih dahulu!");
+                showToast("Peringatan", "Silakan masukkan URL Google Spreadsheet terlebih dahulu.", "error");
                 return;
             }
 
-            setLoadingState(true);
-            updateStatusIndicator("Menghubungkan ke Google Sheets...", "amber");
-
-            // Transformasikan URL edit biasa menjadi tautan ekspor CSV murni
-            let spreadsheetId = "";
-            const matches = urlInput.match(/\/d\/([a-zA-Z0-9-_]+)/);
-            if (matches && matches[1]) {
-                spreadsheetId = matches[1];
-            } else {
-                alert("Format Tautan Google Spreadsheet Tidak Valid. Harap salin tautan dengan benar.");
-                setLoadingState(false);
-                updateStatusIndicator("Koneksi Gagal (Kesalahan Tautan)", "rose");
+            // Ekstrak ID Spreadsheet menggunakan regex
+            const sheetIdMatch = urlInput.match(/\/d\/([a-zA-Z0-9-_]+)/);
+            if (!sheetIdMatch) {
+                showToast("Format Salah", "URL Google Spreadsheet tidak valid.", "error");
                 return;
             }
 
-            const csvUrl = `https://docs.google.com/spreadsheets/d/${spreadsheetId}/export?format=csv&gid=0`;
+            const spreadsheetId = sheetIdMatch[1];
+            const fetchUrl = `https://docs.google.com/spreadsheets/d/${spreadsheetId}/export?format=csv`;
 
-            fetch(csvUrl)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error("Gagal mengambil data dari endpoint ekspor.");
-                    }
-                    return response.text();
-                })
-                .then(csvText => {
-                    parseCsvData(csvText);
-                })
-                .catch(error => {
-                    console.error(error);
-                    alert("Gagal membaca Spreadsheet. Pastikan opsi 'Siapa saja yang memiliki link dapat melihat' sudah aktif di Google Drive.");
-                    setLoadingState(false);
-                    updateStatusIndicator("Koneksi Gagal / Tautan Diproteksi", "rose");
-                });
-        }
+            // Efek Loading
+            refreshIcon.classList.add('animate-spin');
+            statusDot.className = 'inline-block w-2.5 h-2.5 bg-brand-500 rounded-full animate-ping';
+            statusText.textContent = "Sedang menghubungi server Google...";
 
-        // PARSER FORMAT CSV MENJADI STRUKTUR DATA JSON YANG SIAP DIKONSUMSI
-        function parseCsvData(csvText) {
-            const lines = csvText.split(/\r?\n/);
-            if (lines.length < 2) {
-                alert("Spreadsheet terbaca kosong atau tidak memiliki data.");
-                setLoadingState(false);
-                return;
-            }
-
-            // Pecah baris pertama untuk membaca header
-            const headers = splitCsvLine(lines[0]);
-            
-            // Mencari indeks kolom esensial secara adaptif
-            let indexTimestamp = -1;
-            let indexName = -1;
-            let indexClass = -1;
-            let indexScore = -1;
-
-            headers.forEach((header, idx) => {
-                const lower = header.toLowerCase().replace(/[^a-z]/g, '');
-                if (lower.includes("timestamp") || lower.includes("tanggal") || lower.includes("waktu")) {
-                    indexTimestamp = idx;
-                } else if (lower.includes("nama") || lower.includes("namalengkap")) {
-                    indexName = idx;
-                } else if (lower.includes("kelas")) {
-                    indexClass = idx;
-                } else if (lower.includes("score") || lower.includes("skor") || lower.includes("nilai")) {
-                    indexScore = idx;
-                }
-            });
-
-            // Fallback jika pencarian adaptif gagal
-            if (indexName === -1 || indexScore === -1) {
-                indexTimestamp = 0;
-                indexScore = 1;
-                indexName = 2;
-                indexClass = 3;
-            }
-
-            const parsedData = [];
-            for (let i = 1; i < lines.length; i++) {
-                if (!lines[i].trim()) continue;
-                const columns = splitCsvLine(lines[i]);
-                if (columns.length < 2) continue;
-
-                parsedData.push({
-                    timestamp: columns[indexTimestamp] || "-",
-                    name: columns[indexName] || "Tanpa Nama",
-                    class: (columns[indexClass] || "Umum").toUpperCase().trim(),
-                    score: columns[indexScore] || "0 / 100"
-                });
-            }
-
-            allStudentsData = parsedData;
-            processRawData(allStudentsData);
-            setLoadingState(false);
-            updateStatusIndicator("Koneksi Berhasil & Real-Time Aktif", "emerald");
-        }
-
-        // SPLITTER BARIS CSV DENGAN MEMPERHITUNGKAN KUTIP GANDA (DOUBLE QUOTES CAPTURING)
-        function splitCsvLine(line) {
-            const result = [];
-            let current = "";
-            let inQuotes = false;
-            for (let i = 0; i < line.length; i++) {
-                const char = line[i];
-                if (char === '"') {
-                    inQuotes = !inQuotes;
-                } else if (char === ',' && !inQuotes) {
-                    result.push(current.trim());
-                    current = "";
-                } else {
-                    current += char;
-                }
-            }
-            result.push(current.trim());
-            return result.map(val => val.replace(/^"|"$/g, ''));
-        }
-
-        // PENGHITUNG STATISTIK UTAMA (AVERAGE, HIGHEST, LOWEST, TOTALS)
-        function processRawData(data) {
-            if (!data || data.length === 0) {
-                renderEmptyTable();
-                return;
-            }
-
-            let sum = 0;
-            let highest = -Infinity;
-            let lowest = Infinity;
-            const uniqueClasses = new Set();
-
-            data.forEach(item => {
-                // Konversi string skor (misal "80 / 100" atau "70" atau "8.5") menjadi angka bulat desimal
-                let numericScore = 0;
-                if (item.score.includes("/")) {
-                    numericScore = parseFloat(item.score.split("/")[0].trim()) || 0;
-                } else {
-                    numericScore = parseFloat(item.score) || 0;
-                }
-
-                // Normalisasi jika rentang skor menggunakan rasio maksimal desimal 10 ke 100
-                if (numericScore <= 10 && !item.score.includes("/10")) {
-                    numericScore = numericScore * 10;
-                }
-
-                item.numericScore = Math.round(numericScore);
+            try {
+                const response = await fetch(fetchUrl);
+                if (!response.ok) throw new Error("Gagal mengambil file CSV");
                 
-                // Cek Aturan KKM berdasarkan digit depan kelas (7, 8, atau 9)
-                const classDigit = item.class.charAt(0);
-                const limitKkm = KKM_RULES[classDigit] || 75; // Default fallback KKM jika kelas bukan 7, 8, atau 9 adalah 75
-                item.kkmLimit = limitKkm;
-                item.isPassed = item.numericScore >= limitKkm;
+                const csvText = await response.text();
+                const parsedData = parseCsvData(csvText);
 
-                sum += item.numericScore;
-                if (item.numericScore > highest) highest = item.numericScore;
-                if (item.numericScore < lowest) lowest = item.numericScore;
-
-                if (item.class) {
-                    uniqueClasses.add(item.class);
+                if (parsedData.length === 0) {
+                    throw new Error("Struktur kolom tidak dikenal atau data baris kosong.");
                 }
-            });
 
-            // Update Panel Atas Statistik
-            document.getElementById('statTotal').textContent = data.length;
-            document.getElementById('statAverage').textContent = (sum / data.length).toFixed(1);
-            document.getElementById('statHighest').textContent = highest;
-            document.getElementById('statLowest').textContent = lowest;
+                // Sukses
+                loadLocalData(parsedData);
+                
+                // Perbarui status koneksi
+                statusDot.className = 'inline-block w-2.5 h-2.5 bg-emerald-500 rounded-full';
+                statusText.textContent = `Tersambung secara real-time. Memuat ${parsedData.length} baris data dari Google Sheets.`;
+                activeIndicator.classList.remove('hidden');
 
-            // Update Dropdown Filter Kelas
-            const classFilter = document.getElementById('classFilter');
-            classFilter.innerHTML = '<option value="">Semua Kelas</option>';
-            const sortedClasses = Array.from(uniqueClasses).sort();
-            sortedClasses.forEach(cls => {
-                const opt = document.createElement('option');
-                opt.value = cls;
-                opt.textContent = `Kelas ${cls}`;
-                classFilter.appendChild(opt);
-            });
+                showToast("Sinkronisasi Sukses", `Berhasil memuat ${parsedData.length} data siswa.`, "success");
+            } catch (err) {
+                console.error(err);
+                statusDot.className = 'inline-block w-2.5 h-2.5 bg-rose-500 rounded-full';
+                statusText.textContent = `Koneksi gagal: Pastikan setelan berbagi di Spreadsheet adalah "Siapa saja dengan link dapat melihat".`;
+                showToast("Sinkronisasi Gagal", err.message, "error");
+            } finally {
+                refreshIcon.classList.remove('animate-spin');
+            }
+        }
+
+        // Fungsi Memuat Data Demo secara manual jika diklik
+        function loadDemoData() {
+            loadLocalData(DEMO_DATA);
+            
+            // Atur status indikator
+            const statusDot = document.getElementById('statusIndicatorDot');
+            const statusText = document.getElementById('statusText');
+            const activeIndicator = document.getElementById('activeIndicator');
+
+            statusDot.className = 'inline-block w-2.5 h-2.5 bg-amber-400 rounded-full';
+            statusText.textContent = "Menampilkan data demo/simulasi terintegrasi.";
+            activeIndicator.classList.remove('hidden');
+
+            showToast("Data Demo Dimuat", "Dashboard menampilkan visual simulasi siap uji.", "info");
+        }
+
+        // Parser CSV cerdas mendeteksi otomatis penamaan header bahasa indonesia / inggris
+        function parseCsvData(csvText) {
+            const rows = csvText.split(/\r?\n/).map(row => {
+                // Parse CSV secara aman menghindari bug koma di dalam string ganda
+                let insideQuote = false;
+                let entries = [];
+                let current = '';
+                for (let char of row) {
+                    if (char === '"') {
+                        insideQuote = !insideQuote;
+                    } else if (char === ',' && !insideQuote) {
+                        entries.push(current.trim());
+                        current = '';
+                    } else {
+                        current += char;
+                    }
+                }
+                entries.push(current.trim());
+                return entries;
+            }).filter(row => row.some(cell => cell !== ''));
+
+            if (rows.length < 2) return [];
+
+            const headers = rows[0].map(h => h.toLowerCase());
+            
+            // Pencarian indeks kolom berdasarkan kecocokan kata kunci
+            let timestampIdx = headers.findIndex(h => h.includes('time') || h.includes('waktu') || h.includes('tanggal'));
+            let namaIdx = headers.findIndex(h => h.includes('nama') || h.includes('name') || h.includes('peserta'));
+            let kelasIdx = headers.findIndex(h => h.includes('kelas') || h.includes('class') || h.includes('tingkat'));
+            let skorIdx = headers.findIndex(h => h.includes('skor') || h.includes('score') || h.includes('nilai'));
+
+            // Default fallback index jika tidak otomatis cocok
+            if (timestampIdx === -1) timestampIdx = 0;
+            if (skorIdx === -1) skorIdx = 1;
+            if (namaIdx === -1) namaIdx = 2;
+            if (kelasIdx === -1) kelasIdx = 3;
+
+            const students = [];
+
+            for (let i = 1; i < rows.length; i++) {
+                const r = rows[i];
+                if (r.length < 2) continue;
+
+                // Pembersihan format skor (Contoh: "80 / 100", "80/100", "80.00")
+                let rawScore = r[skorIdx] || '0';
+                let parsedScore = 0;
+                let maxScore = 100;
+                
+                if (rawScore.includes('/')) {
+                    const splitScore = rawScore.split('/');
+                    parsedScore = parseFloat(splitScore[0]) || 0;
+                    maxScore = parseFloat(splitScore[1]) || 100;
+                } else {
+                    parsedScore = parseFloat(rawScore) || 0;
+                }
+
+                students.push({
+                    timestamp: r[timestampIdx] || '-',
+                    nama: (r[namaIdx] || 'TANPA NAMA').toUpperCase(),
+                    kelas: (r[kelasIdx] || 'UMUM').toUpperCase(),
+                    skor: parsedScore,
+                    maxSkor: maxScore
+                });
+            }
+
+            return students;
+        }
+
+        // Deteksi level kelas (7, 8, 9) secara pintar dari string kelas
+        function determineLevel(kelasString) {
+            const classLower = kelasString.toLowerCase();
+            if (classLower.includes('8') || classLower.includes('viii')) return '8';
+            if (classLower.includes('9') || classLower.includes('ix')) return '9';
+            return '7'; // fallback default ke tingkat 7
+        }
+
+        // Dapatkan KKM spesifik siswa berdasarkan level kelasnya
+        function getKkmValue(kelas) {
+            const level = determineLevel(kelas);
+            if (level === '8') return kkm8;
+            if (level === '9') return kkm9;
+            return kkm7;
+        }
+
+        // Sinkronisasi Input Nilai KKM
+        function updateKkmValues() {
+            kkm7 = parseInt(document.getElementById('kkmClass7').value) || 0;
+            kkm8 = parseInt(document.getElementById('kkmClass8').value) || 0;
+            kkm9 = parseInt(document.getElementById('kkmClass9').value) || 0;
 
             filterData();
+            updateStats();
+            buildRecapTables();
         }
 
-        // PENYARING DATA TERHADAP INPUT CARI & FILTER DROPDOWN KELAS
+        // Membangun daftar kelas dinamis untuk filter dropdown
+        function buildClassDropdown() {
+            const dropdown = document.getElementById('classFilter');
+            dropdown.innerHTML = '<option value="">Semua Kelas</option>';
+
+            const classes = [...new Set(allStudents.map(s => s.kelas))].sort();
+            classes.forEach(c => {
+                const option = document.createElement('option');
+                option.value = c;
+                option.textContent = c;
+                dropdown.appendChild(option);
+            });
+        }
+
+        // Filter tabel utama
         function filterData() {
-            const query = document.getElementById('searchInput').value.toLowerCase().trim();
+            const searchKeyword = document.getElementById('searchInput').value.trim().toUpperCase();
             const selectedClass = document.getElementById('classFilter').value;
 
-            filteredStudentsData = allStudentsData.filter(student => {
-                const matchName = student.name.toLowerCase().includes(query);
-                const matchClass = selectedClass === "" || student.class === selectedClass;
-                return matchName && matchClass;
+            filteredStudents = allStudents.filter(s => {
+                const matchSearch = s.nama.includes(searchKeyword);
+                const matchClass = selectedClass === "" || s.kelas === selectedClass;
+                return matchSearch && matchClass;
             });
 
             currentPage = 1;
             renderTable();
         }
 
-        // RENDER DATA TABEL UTAMA (DENGAN PAGINATION)
+        // Render tabel data utama
         function renderTable() {
             const tbody = document.getElementById('studentTableBody');
             const emptyState = document.getElementById('emptyState');
             tbody.innerHTML = '';
 
-            if (filteredStudentsData.length === 0) {
+            if (filteredStudents.length === 0) {
                 emptyState.classList.remove('hidden');
-                document.getElementById('tableSummary').textContent = "Menampilkan 0 dari 0 peserta";
+                document.getElementById('tableSummary').textContent = 'Menampilkan 0 dari 0 peserta';
                 document.getElementById('prevBtn').disabled = true;
                 document.getElementById('nextBtn').disabled = true;
                 return;
@@ -938,230 +908,306 @@
 
             emptyState.classList.add('hidden');
 
+            // Kalkulasi pagination
+            const totalItems = filteredStudents.length;
+            const totalPages = Math.ceil(totalItems / rowsPerPage);
             const startIndex = (currentPage - 1) * rowsPerPage;
-            const endIndex = Math.min(startIndex + rowsPerPage, filteredStudentsData.length);
-            const paginatedData = filteredStudentsData.slice(startIndex, endIndex);
+            const endIndex = Math.min(startIndex + rowsPerPage, totalItems);
 
-            paginatedData.forEach((student, index) => {
-                const globalIndex = startIndex + index + 1;
+            const pageItems = filteredStudents.slice(startIndex, endIndex);
+
+            pageItems.forEach((s, idx) => {
+                const kkm = getKkmValue(s.kelas);
+                const isPassed = s.skor >= kkm;
+
                 const tr = document.createElement('tr');
-                tr.className = "hover:bg-slate-50 dark:hover:bg-slate-900/50 transition-colors border-b border-slate-100 dark:border-slate-800/40";
-                
-                const statusBadge = student.isPassed 
-                    ? `<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-400"><i class="fa-solid fa-circle-check"></i> Tuntas</span>`
-                    : `<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-rose-100 text-rose-800 dark:bg-rose-950/40 dark:text-rose-400"><i class="fa-solid fa-triangle-exclamation"></i> Remedial</span>`;
-
+                tr.className = "hover:bg-slate-50 dark:hover:bg-slate-900/40 border-b border-slate-100 dark:border-slate-800 transition-colors";
                 tr.innerHTML = `
-                    <td class="py-4 px-6 text-center font-semibold text-slate-400">${globalIndex}</td>
-                    <td class="py-4 px-6 font-bold text-slate-900 dark:text-white">${student.name}</td>
-                    <td class="py-4 px-6 text-slate-600 dark:text-slate-300 font-semibold">${student.class}</td>
-                    <td class="py-4 px-6 font-extrabold text-brand-600 dark:text-brand-400">${student.numericScore} <span class="text-xs font-normal text-slate-400">/ 100</span></td>
-                    <td class="py-4 px-6 text-slate-400 dark:text-slate-500 text-xs">${student.timestamp}</td>
-                    <td class="py-4 px-6 text-center">${statusBadge}</td>
+                    <td class="py-4 px-6 text-center text-slate-400 font-bold">${startIndex + idx + 1}</td>
+                    <td class="py-4 px-6 font-bold text-slate-800 dark:text-slate-200">${s.nama}</td>
+                    <td class="py-4 px-6 font-semibold text-slate-500 dark:text-slate-400">${s.kelas}</td>
+                    <td class="py-4 px-6 font-bold text-base text-brand-600 dark:text-brand-400">${s.skor} <span class="text-xs text-slate-400">/ ${s.maxSkor}</span></td>
+                    <td class="py-4 px-6 text-slate-500 dark:text-slate-400 text-xs">${s.timestamp}</td>
+                    <td class="py-4 px-6 text-center">
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold shadow-sm ${
+                            isPassed 
+                            ? 'bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 border border-emerald-200' 
+                            : 'bg-rose-50 dark:bg-rose-950/30 text-rose-600 dark:text-rose-400 border border-rose-200'
+                        }">
+                            <i class="fa-solid ${isPassed ? 'fa-circle-check' : 'fa-circle-xmark'}"></i>
+                            ${isPassed ? 'TUNTAS' : 'REMEDIAL'}
+                        </span>
+                    </td>
                 `;
                 tbody.appendChild(tr);
             });
 
-            // Update Summary Text & Pagination Buttons
-            document.getElementById('tableSummary').textContent = `Menampilkan ${startIndex + 1} - ${endIndex} dari ${filteredStudentsData.length} peserta`;
+            // Summary Text
+            document.getElementById('tableSummary').textContent = `Menampilkan ${startIndex + 1} s.d ${endIndex} dari ${totalItems} peserta`;
+            
+            // Button state
             document.getElementById('prevBtn').disabled = currentPage === 1;
-            document.getElementById('nextBtn').disabled = endIndex >= filteredStudentsData.length;
+            document.getElementById('nextBtn').disabled = currentPage === totalPages;
         }
 
-        // FUNGSI NAVIGASI TOMBOL PAGINATION
+        // Pagination Handler
         function changePage(direction) {
             currentPage += direction;
             renderTable();
         }
 
-        function renderEmptyTable() {
-            document.getElementById('studentTableBody').innerHTML = '';
-            document.getElementById('emptyState').classList.remove('hidden');
+        // Mengkalkulasi Dashboard Statistik Atas
+        function updateStats() {
+            const total = allStudents.length;
+            if (total === 0) {
+                document.getElementById('statTotal').textContent = '0';
+                document.getElementById('statAverage').textContent = '0';
+                document.getElementById('statHighest').textContent = '0';
+                document.getElementById('statLowest').textContent = '0';
+                return;
+            }
+
+            const scores = allStudents.map(s => s.skor);
+            const sum = scores.reduce((acc, curr) => acc + curr, 0);
+            const average = (sum / total).toFixed(1);
+            const highest = Math.max(...scores);
+            const lowest = Math.min(...scores);
+
+            document.getElementById('statTotal').textContent = total;
+            document.getElementById('statAverage').textContent = average;
+            document.getElementById('statHighest').textContent = highest;
+            document.getElementById('statLowest').textContent = lowest;
         }
 
-        // GENERASI & RENDER ANALISIS REKAPITULASI DUA TABEL DI MENU REKAPITULASI
-        function renderRecapTables() {
-            // Dapatkan seluruh daftar kelas yang unik dari data
-            const classesMap = {};
-            
-            // Siapkan struktur data awal berdasar Kuota Spendaka
-            Object.keys(DEFAULT_QUOTA).forEach(cls => {
-                classesMap[cls] = {
-                    joined: 0,
-                    tuntas: 0,
-                    remedial: 0,
-                    quota: DEFAULT_QUOTA[cls]
-                };
-            });
-
-            // Masukkan data respon real-time yang ada
-            allStudentsData.forEach(student => {
-                if (!classesMap[student.class]) {
-                    classesMap[student.class] = { joined: 0, tuntas: 0, remedial: 0, quota: 32 }; // default kuota baru jika kustom
-                }
-                classesMap[student.class].joined += 1;
-                if (student.isPassed) {
-                    classesMap[student.class].tuntas += 1;
-                } else {
-                    classesMap[student.class].remedial += 1;
-                }
-            });
-
-            const sortedClassesKeys = Object.keys(classesMap).sort();
-
-            // Render Tabel 1: Keikutsertaan per-Kelas
+        // Membangun Rekapitulasi di Tab 2 (Analisis Tabel Kelas & Ketuntasan)
+        function buildRecapTables() {
             const classSummaryBody = document.getElementById('classSummaryBody');
+            const scoreSummaryBody = document.getElementById('scoreSummaryBody');
+            const classTableEmpty = document.getElementById('classTableEmpty');
+            const scoreTableEmpty = document.getElementById('scoreTableEmpty');
+
             classSummaryBody.innerHTML = '';
-            
-            if (sortedClassesKeys.length === 0) {
-                document.getElementById('classTableEmpty').classList.remove('hidden');
-            } else {
-                document.getElementById('classTableEmpty').classList.add('hidden');
-                sortedClassesKeys.forEach((clsKey, index) => {
-                    const info = classesMap[clsKey];
-                    const absence = Math.max(0, info.quota - info.joined);
-                    const percentage = info.quota > 0 ? ((info.joined / info.quota) * 100).toFixed(1) : "0.0";
-                    
-                    const tr = document.createElement('tr');
-                    tr.className = "hover:bg-slate-50 dark:hover:bg-slate-900/50 transition-colors border-b border-slate-100 dark:border-slate-800/40";
-                    tr.innerHTML = `
-                        <td class="py-3 px-4 text-center font-bold text-slate-400">${index + 1}</td>
-                        <td class="py-3 px-4 font-bold text-slate-800 dark:text-slate-200">Kelas ${clsKey}</td>
-                        <td class="py-3 px-4 text-center font-semibold text-emerald-600 dark:text-emerald-400">${info.joined} Siswa</td>
-                        <td class="py-3 px-4 text-center font-semibold text-amber-600 dark:text-amber-400">${absence} Siswa</td>
-                        <td class="py-3 px-4 text-center font-semibold text-slate-500">${info.quota} Siswa</td>
-                        <td class="py-3 px-4 text-center font-extrabold text-brand-600 dark:text-brand-400">${percentage}%</td>
-                    `;
-                    classSummaryBody.appendChild(tr);
-                });
+            scoreSummaryBody.innerHTML = '';
+
+            if (allStudents.length === 0) {
+                classTableEmpty.classList.remove('hidden');
+                scoreTableEmpty.classList.remove('hidden');
+                return;
             }
 
-            // Render Tabel 2: Distribusi Ketuntasan (KKM)
-            const scoreSummaryBody = document.getElementById('scoreSummaryBody');
-            scoreSummaryBody.innerHTML = '';
-            
-            if (sortedClassesKeys.length === 0) {
-                document.getElementById('scoreTableEmpty').classList.remove('hidden');
-            } else {
-                document.getElementById('scoreTableEmpty').classList.add('hidden');
-                sortedClassesKeys.forEach((clsKey, index) => {
-                    const info = classesMap[clsKey];
-                    const classDigit = clsKey.charAt(0);
-                    const limitKkm = KKM_RULES[classDigit] || 75;
-                    const passingRate = info.joined > 0 ? ((info.tuntas / info.joined) * 100).toFixed(1) : "0.0";
+            classTableEmpty.classList.add('hidden');
+            scoreTableEmpty.classList.add('hidden');
 
-                    const tr = document.createElement('tr');
-                    tr.className = "hover:bg-slate-50 dark:hover:bg-slate-900/50 transition-colors border-b border-slate-100 dark:border-slate-800/40";
-                    tr.innerHTML = `
-                        <td class="py-3 px-4 text-center font-bold text-slate-400">${index + 1}</td>
-                        <td class="py-3 px-4 font-bold text-slate-800 dark:text-slate-200">Kelas ${clsKey}</td>
-                        <td class="py-3 px-4 text-center font-bold text-slate-500">${limitKkm}</td>
-                        <td class="py-3 px-4 text-center font-semibold text-emerald-600 dark:text-emerald-400">${info.tuntas} Siswa</td>
-                        <td class="py-3 px-4 text-center font-semibold text-rose-600 dark:text-rose-400">${info.remedial} Siswa</td>
-                        <td class="py-3 px-4 text-center font-extrabold text-indigo-600 dark:text-indigo-400">${passingRate}%</td>
-                    `;
-                    scoreSummaryBody.appendChild(tr);
-                });
+            // Hitung distribusi unik per kelas
+            const classMap = {};
+            allStudents.forEach(s => {
+                if (!classMap[s.kelas]) {
+                    classMap[s.kelas] = {
+                        ikut: 0,
+                        tuntas: 0,
+                        remed: 0,
+                        kkm: getKkmValue(s.kelas)
+                    };
+                }
+                
+                classMap[s.kelas].ikut++;
+                if (s.skor >= classMap[s.kelas].kkm) {
+                    classMap[s.kelas].tuntas++;
+                } else {
+                    classMap[s.kelas].remed++;
+                }
+            });
+
+            let counter = 1;
+
+            for (const kelas in classMap) {
+                const info = classMap[kelas];
+                
+                // Mengambil kuota siswa resmi dari kamus CLASS_QUOTAS.
+                // Jika tidak terdaftar, gunakan jumlah yang mengikuti ujian sebagai default kuota.
+                const quota = CLASS_QUOTAS[kelas] || info.ikut;
+                const tidakIkut = Math.max(0, quota - info.ikut);
+                
+                // Menghitung persentase keikutsertaan per kelas (Siswa Ikut / Kuota Kelas)
+                const percentage = ((info.ikut / quota) * 100).toFixed(1);
+
+                // Rekap Kelas
+                const trClass = document.createElement('tr');
+                trClass.className = "hover:bg-slate-50 dark:hover:bg-slate-900/40 border-b border-slate-100 dark:border-slate-800 transition-colors";
+                trClass.innerHTML = `
+                    <td class="py-3.5 px-4 text-center text-slate-400 font-bold">${counter}</td>
+                    <td class="py-3.5 px-4 font-bold text-slate-800 dark:text-slate-200">${kelas}</td>
+                    <td class="py-3.5 px-4 text-center font-bold text-emerald-600 dark:text-emerald-400">${info.ikut}</td>
+                    <td class="py-3.5 px-4 text-center text-rose-500 font-bold">${tidakIkut}</td>
+                    <td class="py-3.5 px-4 text-center font-bold text-slate-700 dark:text-slate-300">${quota}</td>
+                    <td class="py-3.5 px-4 text-center text-indigo-600 dark:text-indigo-400 font-extrabold">${percentage}%</td>
+                `;
+                classSummaryBody.appendChild(trClass);
+
+                // Rekap Ketuntasan
+                const ratio = ((info.tuntas / info.ikut) * 100).toFixed(1);
+                const trScore = document.createElement('tr');
+                trScore.className = "hover:bg-slate-50 dark:hover:bg-slate-900/40 border-b border-slate-100 dark:border-slate-800 transition-colors";
+                trScore.innerHTML = `
+                    <td class="py-3.5 px-4 text-center text-slate-400 font-bold">${counter}</td>
+                    <td class="py-3.5 px-4 font-bold text-slate-800 dark:text-slate-200">${kelas}</td>
+                    <td class="py-3.5 px-4 text-center font-bold text-slate-500">>= ${info.kkm}</td>
+                    <td class="py-3.5 px-4 text-center text-emerald-600 font-bold">${info.tuntas}</td>
+                    <td class="py-3.5 px-4 text-center text-rose-600 font-bold">${info.remed}</td>
+                    <td class="py-3.5 px-4 text-center font-extrabold text-slate-700 dark:text-slate-300">
+                        <span class="inline-block px-2.5 py-1 bg-brand-50 dark:bg-slate-900 text-brand-600 dark:text-brand-400 rounded-lg">${ratio}%</span>
+                    </td>
+                `;
+                scoreSummaryBody.appendChild(trScore);
+
+                counter++;
             }
         }
 
-        // FUNGSI PRINT PREVIEW MODAL INTEGRATION
+        // Navigasi Menu Tab
+        function switchMenu(menu) {
+            currentMenu = menu;
+            const tabBtnTable = document.getElementById('tabButtonTable');
+            const tabBtnCharts = document.getElementById('tabButtonCharts');
+            const tabContentTable = document.getElementById('tabContentTable');
+            const tabContentCharts = document.getElementById('tabContentCharts');
+
+            if (menu === 'table') {
+                tabBtnTable.className = "flex items-center gap-2 py-3.5 px-6 font-bold text-sm border-b-2 border-brand-600 text-brand-600 dark:text-brand-500 transition-all duration-200";
+                tabBtnCharts.className = "flex items-center gap-2 py-3.5 px-6 font-semibold text-sm border-b-2 border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 transition-all duration-200";
+                tabContentTable.classList.remove('hidden');
+                tabContentCharts.classList.add('hidden');
+            } else {
+                tabBtnTable.className = "flex items-center gap-2 py-3.5 px-6 font-semibold text-sm border-b-2 border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 transition-all duration-200";
+                tabBtnCharts.className = "flex items-center gap-2 py-3.5 px-6 font-bold text-sm border-b-2 border-brand-600 text-brand-600 dark:text-brand-500 transition-all duration-200";
+                tabContentTable.classList.add('hidden');
+                tabContentCharts.classList.remove('hidden');
+            }
+        }
+
+        // --- PRINT PREVIEW & EXPORTS (F4 FORMAT) ---
+
         function openPrintPreview() {
-            document.getElementById('printPreviewModal').classList.remove('hidden');
-            document.getElementById('printPreviewModal').classList.add('flex');
-            
-            // Tarik rata-rata KKM yang diset user saat ini
-            const avgKkm = Math.round((KKM_RULES["7"] + KKM_RULES["8"] + KKM_RULES["9"]) / 3);
-            document.getElementById('pdfMetaKkm').textContent = avgKkm;
-            
+            if (allStudents.length === 0) {
+                showToast("Peringatan", "Tidak ada data siswa untuk divisualisasikan ke lembar cetak.", "error");
+                return;
+            }
+
+            // Sync Header input dan layout cetak
             updatePdfHeader();
-            renderPdfRows();
+
+            // Populate preview table
+            const previewBody = document.getElementById('previewTableBody');
+            previewBody.innerHTML = '';
+
+            filteredStudents.forEach((s, idx) => {
+                const kkm = getKkmValue(s.kelas);
+                const isPassed = s.skor >= kkm;
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="border border-black p-2 text-center text-xs font-bold">${idx + 1}</td>
+                    <td class="border border-black p-2 font-bold uppercase text-xs">${s.nama}</td>
+                    <td class="border border-black p-2 uppercase text-center text-xs">${s.kelas}</td>
+                    <td class="border border-black p-2 text-center font-bold text-xs">${s.skor}</td>
+                    <td class="border border-black p-2 text-center text-xs">>= ${kkm}</td>
+                    <td class="border border-black p-2 text-center font-bold text-xs ${isPassed ? 'text-emerald-700' : 'text-rose-700'}">
+                        ${isPassed ? 'TUNTAS' : 'REMEDIAL'}
+                    </td>
+                `;
+                previewBody.appendChild(tr);
+            });
+
+            document.getElementById('printPreviewModal').classList.remove('hidden');
         }
 
         function closePrintPreview() {
             document.getElementById('printPreviewModal').classList.add('hidden');
-            document.getElementById('printPreviewModal').classList.remove('flex');
         }
 
-        // UPDATE JUDUL DINAMIS DI SPREADSHEET CANVAS PDF PREVIEW
+        // Sinkronisasi data antara input form di modal dengan lembar F4 murni
         function updatePdfHeader() {
             const titleVal = document.getElementById('pdfDocTitleInput').value.toUpperCase();
+            const schoolVal = document.getElementById('pdfSchoolInput').value.toUpperCase();
             const subjectVal = document.getElementById('pdfSubjectInput').value.toUpperCase();
-            const dateVal = document.getElementById('pdfDateInput').value;
-            const principalVal = document.getElementById('pdfPrincipalInput').value;
+            const yearVal = document.getElementById('pdfYearInput').value;
 
-            document.getElementById('pdfDocTitle').textContent = titleVal;
-            document.getElementById('pdfMetaSubject').textContent = subjectVal;
-            document.getElementById('pdfMetaDate').textContent = dateVal;
-            document.getElementById('pdfMetaPrincipal').textContent = principalVal;
+            document.getElementById('previewDocTitle').textContent = titleVal;
+            document.getElementById('previewSchoolTitle').textContent = schoolVal;
+            document.getElementById('previewSubject').textContent = subjectVal;
+            document.getElementById('previewYear').textContent = yearVal;
         }
 
-        // RENDER BARIS SISWA DALAM TABEL PRATINJAU CETAK
-        function renderPdfRows() {
-            const tbody = document.getElementById('pdfTableBody');
-            tbody.innerHTML = '';
-
-            const dataToRender = filteredStudentsData.length > 0 ? filteredStudentsData : allStudentsData;
-
-            if (dataToRender.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; padding: 12px; font-style: italic;">Tidak ada data untuk dicetak</td></tr>`;
-                document.getElementById('pdfMetaTotal').textContent = "0 Siswa";
-                return;
-            }
-
-            document.getElementById('pdfMetaTotal').textContent = `${dataToRender.length} Siswa`;
-
-            dataToRender.forEach((student, index) => {
-                const tr = document.createElement('tr');
-                const statusKeterangan = student.isPassed ? "TUNTAS" : "REMEDIAL";
-                tr.innerHTML = `
-                    <td style="border: 1px solid black; padding: 5px; text-align: center;">${index + 1}</td>
-                    <td style="border: 1px solid black; padding: 5px; font-weight: bold;">${student.name}</td>
-                    <td style="border: 1px solid black; padding: 5px; text-align: center;">${student.class}</td>
-                    <td style="border: 1px solid black; padding: 5px; text-align: center; font-weight: bold;">${student.numericScore}</td>
-                    <td style="border: 1px solid black; padding: 5px; text-align: center; font-weight: bold; color: ${student.isPassed ? '#047857' : '#b91c1c'};">${statusKeterangan}</td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        // EKSPOR FORMAT F4 SPREADSHEET KE FILE PDF MENGGUNAKAN HTML2PDF.JS
-        function exportToPdf() {
+        // Export Lembar F4 Utama ke PDF menggunakan html2pdf
+        function exportToPdfMain() {
             const element = document.getElementById('modalPaperSheet');
             const opt = {
                 margin:       0.2,
-                filename:     `Laporan_Monitoring_Ujian_${document.getElementById('pdfSubjectInput').value}.pdf`,
+                filename:     `Laporan_Ujian_Examonlan_${new Date().toISOString().slice(0,10)}.pdf`,
                 image:        { type: 'jpeg', quality: 0.98 },
-                html2canvas:  { scale: 2, useCORS: true },
-                jsPDF:        { unit: 'in', format: 'legal', orientation: 'portrait' } // Menggunakan Format Legal (Ekuivalen mendekati F4)
+                html2canvas:  { scale: 2 },
+                jsPDF:        { unit: 'in', format: 'legal', orientation: 'portrait' } // Ukuran kertas F4/legal mendekati
             };
             
-            html2pdf().set(opt).from(element).save();
+            showToast("Memproses", "Mengonversi lembar dokumen F4 ke PDF...", "info");
+            html2pdf().set(opt).from(element).save().then(() => {
+                showToast("Sukses", "PDF berhasil diunduh.", "success");
+            });
         }
 
-        // PRINT LANGSUNG MEMANFAATKAN ENGINE SISTEM OPERASI UTAMA
-        function printBrowser() {
-            window.print();
+        // Export Lembar F4 Utama ke Excel menggunakan SheetJS
+        function exportToExcelMain() {
+            const tableData = [];
+            // Buat header Excel khusus
+            tableData.push([document.getElementById('pdfSchoolInput').value.toUpperCase()]);
+            tableData.push([document.getElementById('pdfDocTitleInput').value.toUpperCase()]);
+            tableData.push(["Mata Pelajaran: " + document.getElementById('pdfSubjectInput').value.toUpperCase(), "Tahun Pelajaran: " + document.getElementById('pdfYearInput').value]);
+            tableData.push([]); // spasi baris kosong
+            
+            // Header Tabel
+            tableData.push(["No", "Nama Lengkap", "Kelas", "Skor", "Kriteria KKM", "Status Ketuntasan"]);
+
+            filteredStudents.forEach((s, idx) => {
+                const kkm = getKkmValue(s.kelas);
+                tableData.push([
+                    idx + 1,
+                    s.nama,
+                    s.kelas,
+                    s.skor,
+                    `>= ${kkm}`,
+                    s.skor >= kkm ? 'TUNTAS' : 'REMEDIAL'
+                ]);
+            });
+
+            const wb = XLSX.utils.book_new();
+            const ws = XLSX.utils.aoa_to_sheet(tableData);
+            XLSX.utils.book_append_sheet(wb, ws, "Laporan Nilai");
+            XLSX.writeFile(wb, `Laporan_Nilai_Examonlan_${new Date().toISOString().slice(0,10)}.xlsx`);
+            showToast("Sukses", "File Excel berhasil diunduh.", "success");
         }
 
-        // EKSPOR REKAPITULASI MANUAL KE FILE PDF
-        function exportRecapToPdf(tableId, filename) {
+        // Eksport Rekap Kelas / Ketuntasan per tabel ke PDF
+        function exportRecapToPdf(tableId, fileNamePrefix) {
             const element = document.getElementById(tableId);
             const opt = {
                 margin:       0.5,
-                filename:     `${filename}.pdf`,
+                filename:     `${fileNamePrefix}_${new Date().toISOString().slice(0,10)}.pdf`,
                 image:        { type: 'jpeg', quality: 0.98 },
                 html2canvas:  { scale: 2 },
-                jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+                jsPDF:        { unit: 'in', format: 'letter', orientation: 'landscape' }
             };
-            html2pdf().set(opt).from(element).save();
+            showToast("Memproses", "Membuat PDF Rekapitulasi...", "info");
+            html2pdf().set(opt).from(element).save().then(() => {
+                showToast("Sukses", "PDF Rekapitulasi berhasil diunduh.", "success");
+            });
         }
 
-        // EKSPOR REKAPITULASI MANUAL KE FILE EXCEL (XLSX)
-        function exportRecapToExcel(tableId, filename) {
+        // Eksport Rekap Kelas / Ketuntasan per tabel ke Excel
+        function exportRecapToExcel(tableId, fileNamePrefix) {
             const table = document.getElementById(tableId);
-            const workbook = XLSX.utils.table_to_book(table, { sheet: "Rekapitulasi" });
-            XLSX.writeFile(workbook, `${filename}.xlsx`);
+            const wb = XLSX.utils.table_to_book(table, { sheet: "Rekapitulasi" });
+            XLSX.writeFile(wb, `${fileNamePrefix}_${new Date().toISOString().slice(0,10)}.xlsx`);
+            showToast("Sukses", "Excel Rekapitulasi berhasil diunduh.", "success");
         }
     </script>
 </body>
